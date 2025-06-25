@@ -12,21 +12,16 @@ class TableCanvas:
         self.state = None
         # 2D list of Entry widgets
         self.entries = []
-        # Callbacks for user interaction
-        self.on_select = None
-        self.on_start_edit = None
-        self.on_finish_edit = None
-        
-    def build(self, root, state, on_select, on_start_edit, on_finish_edit, handle_tab):
+    def build(self, view):
         """
         Build the table UI inside the root widget and initialize state and callbacks.
         """
         logger.info("Building TableCanvas UI.")
-        self.state = state
+        self.state = view.state
         self.entries = []
 
         # Container for scrollable canvas and scrollbars
-        container = tk.Frame(root, bg=BG_COLOR)
+        container = tk.Frame(view.root, bg=BG_COLOR)
         container.pack(fill='both', expand=True)
         logger.debug("Created container frame.")
 
@@ -40,21 +35,21 @@ class TableCanvas:
         self.scroll_x.pack(side="bottom", fill="x")
         self.scroll_y.pack(side="right", fill="y")
         self.canvas.pack(side="left", fill="both", expand=True)
-        logger.debug("Canvas and scrollbars packed.")        
+        logger.debug("Canvas and scrollbars packed.")
 
         # Frame inside the canvas for the table cells
         self.table_frame = tk.Frame(self.canvas, bg="#cccccc")
         self.canvas.create_window((0, 0), window=self.table_frame, anchor="nw")
-        logger.debug("Created table_frame inside canvas.")        
+        logger.debug("Created table_frame inside canvas.")
 
         # When table size changes, update the scroll region
         self.table_frame.bind("<Configure>", self.update_scroll_region)
         logger.debug("Bound update_scroll_region to <Configure> event.")        
 
         # Create the initial grid of entries
-        self.rebuild(state, on_select, on_start_edit, on_finish_edit, handle_tab)
+        self._rebuild(view.state, view.callbacks)
 
-    def rebuild(self, state=None, on_select=None, on_start_edit=None, on_finish_edit=None, handle_tab=None):
+    def _rebuild(self, state=None, callbacks=None):
         """
         Recreate the table grid, e.g. after resize.
         """
@@ -73,10 +68,9 @@ class TableCanvas:
                 e = tk.Entry(self.table_frame, width=12, font=FONT, justify="left", relief="solid", bd=1)
                 e.grid(row=r, column=c)
                 e.insert(0, self.state.get_cell(r, c))
-                e.bind("<Button-1>", lambda event, row=r, col=c: on_select(row, col))
-                e.bind("<FocusIn>", lambda event, row=r, col=c: on_start_edit(row, col))
-                e.bind("<KeyRelease>", lambda event, row=r, col=c: on_finish_edit(row, col))
-                e.bind("<Tab>", lambda event: handle_tab(event))
+                e.bind("<Button-1>", lambda event, row=r, col=c: callbacks["select_cell"](row, col))
+                e.bind("<FocusIn>", lambda event, row=r, col=c: callbacks["start_edit"](row, col))
+                e.bind("<KeyRelease>", lambda event, row=r, col=c: callbacks["finish_edit"](row, col))
                 row_entries.append(e)
                 logger.debug(f"Entry ({r}, {c}) initialized with value: '{self.state.get_cell(r, c)}'") 
             self.entries.append(row_entries)
@@ -84,6 +78,7 @@ class TableCanvas:
         logger.info(f"Table grid rebuilt with {self.state.rows} rows and {self.state.cols} columns.")
         self.highlight_active_cell()
         self.update_scroll_region()
+
 
     def highlight_active_cell(self):
         """

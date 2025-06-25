@@ -2,6 +2,7 @@ from utilities import LOGGER_NAME
 from table_core import GridLogicHelper
 from ..table_ui_utils.canvas_helper import CanvasLogicHelper
 
+import tkinter as tk
 import logging
 
 logger = logging.getLogger(LOGGER_NAME)
@@ -27,12 +28,10 @@ class WordInserterHandler:
         # If new position exceeds grid size, expand and rebuild UI
         if GridLogicHelper.expand_if_needed(self.view.state, r, c):
             logger.info(f"Grid expanded due to Tab key at position ({r}, {c})")
-            self.view.canvas_table.rebuild(
-                self.view.state, self.view.select_cell, self.view.start_edit, self.view.finish_edit, self.view.handle_tab
-            )
+            CanvasLogicHelper.rebuild_table(self.view)
 
         # Update the UI for the edited cell
-        import tkinter as tk
+
         self.view.canvas_table.entries[r][c].delete(0, tk.END)
         self.view.canvas_table.entries[r][c].insert(0, new_text)
         logger.debug(f"UI cell ({r}, {c}) updated with text '{new_text}'")

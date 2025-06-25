@@ -19,9 +19,7 @@ class HistoryHandler:
         """
         logger.info("Undo triggered.")
         self.view.state.undo()
-        self.view.canvas_table.rebuild(
-            self.view.state, self.view.select_cell, self.view.start_edit, self.view.finish_edit, self.view.handle_tab
-        )
+        CanvasLogicHelper.rebuild_table(self.view)
 
     def redo(self):
         """
@@ -29,6 +27,4 @@ class HistoryHandler:
         """
         logger.info("Redo triggered.")
         self.view.state.redo()
-        self.view.canvas_table.rebuild(
-            self.view.state, self.view.select_cell, self.view.start_edit, self.view.finish_edit, self.view.handle_tab
-        )
+        CanvasLogicHelper.rebuild_table(self.view)

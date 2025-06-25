@@ -18,14 +18,11 @@ class CanvasLogicHelper:
         view.canvas_table.entries[r][c].focus_set()
 
     @staticmethod
-    def _rebuild_table(view):
+    def rebuild_table(view):
         """
         Rebuilds the visual grid and reconnects callbacks.
         """
-        view.canvas_table.rebuild(
+        view.canvas_table._rebuild(
             view.state,
-            view.select_cell,
-            view.start_edit,
-            view.finish_edit,
-            view.handle_tab
+            view.callbacks
         )

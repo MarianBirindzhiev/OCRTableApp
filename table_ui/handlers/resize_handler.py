@@ -21,7 +21,5 @@ class ResizeHandler:
         logger.info(f"Applying resize: rows={new_rows}, cols={new_cols}")        
         if new_rows and new_cols:
             self.view.state.resize(new_rows, new_cols)
-            self.view.canvas_table.rebuild(
-                self.view.state, self.view.select_cell, self.view.start_edit, self.view.finish_edit, self.view.handle_tab
-            )
+            CanvasLogicHelper.rebuild_table(self.view)
             logger.debug("Canvas rebuilt after resize.")

@@ -10,7 +10,7 @@ class NavigationHandler:
     def __init__(self, view):
         self.view = view
 
-    def handle_tab(self, event):
+    def handle_tab(self):
             """
             Overrides the default Tab key behavior to move the cursor
             to the next logical cell based on navigation mode.
@@ -24,9 +24,7 @@ class NavigationHandler:
             # If new position exceeds grid size, expand and rebuild UI
             if GridLogicHelper.expand_if_needed(self.view.state, r, c):
                 logger.info(f"Grid expanded due to Tab key at position ({r}, {c})")
-                self.view.canvas_table.rebuild(
-                    self.view.state, self.view.select_cell, self.view.start_edit, self.view.finish_edit, self.handle_tab
-                )
+                CanvasLogicHelper.rebuild_table(self.view)
 
             CanvasLogicHelper.move_cursor_and_focus(self.view.state, self.view.nav, self.view)
             logger.debug(f"Tab navigation complete. Current position: {self.view.state.current_pos}")

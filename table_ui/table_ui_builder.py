@@ -9,7 +9,6 @@ class TableUIBuilder:
         logger.info(f"TableUIBuilder initialized with components.")
         self.setup_ui()
 
-#Ъпдейтни всички тука да си ползват готовите фунцкии на view.
     def setup_ui(self):
         logger.info("Building UI components...")
         self.view.nav_bar.build(self.view.root, self.view.set_nav_mode, self.view.undo,
@@ -17,12 +16,11 @@ class TableUIBuilder:
 
         self.view.resize_controls.build(self.view.root, self.view.apply_size_from_input)
 
-        self.view.canvas_table.build(self.view.root, self.view.state,
-                                self.view.select_cell, self.view.start_edit,
-                                self.view.finish_edit, self.view.handle_tab)
+        self.view.canvas_table.build(self.view)
         self.bind_shortcuts()
         self.view.canvas_table.highlight_active_cell()
 
     def bind_shortcuts(self):
-        self.view.root.bind('<Control-z>', lambda event: self.view.handler.undo())
-        self.view.root.bind('<Control-y>', lambda event: self.view.handler.redo())
+        self.view.root.bind('<Control-z>', lambda event: self.view.undo())
+        self.view.root.bind('<Control-y>', lambda event: self.view.redo())
+        self.view.root.bind("<Tab>",       lambda event: self.view.handle_tab())

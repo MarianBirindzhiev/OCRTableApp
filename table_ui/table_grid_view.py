@@ -31,6 +31,12 @@ class TableGridView:
         self.nav_bar = nav_bar
         self.resize_controls = resize_controls
 
+        self.callbacks = {
+            "select_cell": self.select_cell,
+            "start_edit": self.start_edit,
+            "finish_edit": self.finish_edit,
+        }
+
         self.handler = TableInteractionCoordinator(self)
         self.ui_builder = TableUIBuilder(self)
 
@@ -51,8 +57,8 @@ class TableGridView:
     def insert_word(self, word):
         self.handler.word_inserter_handler.insert_word(word)
 
-    def handle_tab(self, event):
-        return self.handler.nav_handler.handle_tab(event)
+    def handle_tab(self):
+        return self.handler.nav_handler.handle_tab()
     
     def select_cell(self, row,col):
         self.handler.nav_handler.select_cell(row, col)
@@ -67,4 +73,4 @@ class TableGridView:
         self.handler.cell_editor_handler.finish_edit(row, col)
     
     def export(self): 
-        return self.exporter.export(self.state)
+        return self.exporter.export(self.state.grid_data)
