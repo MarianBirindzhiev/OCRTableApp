@@ -1,0 +1,4 @@
+from .components_manager import ComponentsManager
+from .controller_manager import ControllerManager
+from .ocr_processor_manager import OCRProcessorManager
+from .window_manager import WindowManager
