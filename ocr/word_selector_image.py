@@ -89,7 +89,7 @@ class WordSelectorImage:
                     logger.info(f"Word selected: '{text}' at ({x},{y})")
                     try:
                         # Insert the selected word into the current table cell
-                        self.view.handle_word_insert(text)
+                        self.view.insert_word(text)
                         # Draw a green box to indicate selection
                         cv2.polylines(self.img_rgb, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
                         # Update the displayed image in the Matplotlib canvas

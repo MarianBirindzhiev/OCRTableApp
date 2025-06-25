@@ -4,28 +4,25 @@ import logging
 logger = logging.getLogger(LOGGER_NAME)
 
 class TableUIBuilder:
-    def __init__(self, root, state, nav_bar, resize_controls, canvas_table, view):
-        self.root = root
-        self.state = state
-        self.nav_bar = nav_bar
-        self.resize_controls = resize_controls
-        self.canvas_table = canvas_table
+    def __init__(self, view):
         self.view = view
-        logger.info(f"TableUIBuilder initialized with {root} and state components.")
+        logger.info(f"TableUIBuilder initialized with components.")
+        self.setup_ui()
 
+#Ъпдейтни всички тука да си ползват готовите фунцкии на view.
     def setup_ui(self):
         logger.info("Building UI components...")
-        self.nav_bar.build(self.root, self.view.handler.set_nav_mode, self.view.handler.undo,
-                           self.view.handler.redo, self.view.handler.export)
-        
-        self.resize_controls.build(self.root, self.view.handler.apply_size_from_input)
+        self.view.nav_bar.build(self.view.root, self.view.set_nav_mode, self.view.undo,
+                           self.view.redo, self.view.export)
 
-        self.canvas_table.build(self.root, self.state,
+        self.view.resize_controls.build(self.view.root, self.view.apply_size_from_input)
+
+        self.view.canvas_table.build(self.view.root, self.view.state,
                                 self.view.select_cell, self.view.start_edit,
                                 self.view.finish_edit, self.view.handle_tab)
         self.bind_shortcuts()
-        self.canvas_table.highlight_active_cell()
+        self.view.canvas_table.highlight_active_cell()
 
     def bind_shortcuts(self):
-        self.root.bind('<Control-z>', lambda event: self.view.handler.undo())
-        self.root.bind('<Control-y>', lambda event: self.view.handler.redo())
+        self.view.root.bind('<Control-z>', lambda event: self.view.handler.undo())
+        self.view.root.bind('<Control-y>', lambda event: self.view.handler.redo())

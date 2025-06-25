@@ -1,6 +1,6 @@
 from utilities import BG_COLOR, LOGGER_NAME
 from .table_ui_builder import TableUIBuilder
-from .table_interaction_handler import TableInteractionHandler
+from .table_interaction_coordinator import TableInteractionCoordinator
 
 import logging
 
@@ -31,18 +31,40 @@ class TableGridView:
         self.nav_bar = nav_bar
         self.resize_controls = resize_controls
 
-        self.ui_builder = TableUIBuilder(
-            root, state, nav_bar, resize_controls, canvas_table, self
-        )
-        self.handler = TableInteractionHandler(
-            state, nav, word_inserter, exporter, canvas_table, self
-        )
+        self.handler = TableInteractionCoordinator(self)
+        self.ui_builder = TableUIBuilder(self)
 
-        self.ui_builder.setup_ui()
         logger.info("Initializing TableGridView UI components.")        
 
-    def select_cell(self, row, col): self.handler.select_cell(row, col)
-    def start_edit(self, row, col): self.handler.start_edit(row, col)
-    def finish_edit(self, row, col): self.handler.finish_edit(row, col)
-    def handle_word_insert(self, word): self.handler.handle_word_insert(word)
-    def handle_tab(self, event): return self.handler.handle_tab(event)
+    def select_cell(self, row, col): 
+        self.handler.nav_handler.select_cell(row, col)
+
+    def apply_size_from_input(self):
+        self.handler.resize_handler.apply_size_from_input()
+
+    def undo(self):
+        self.handler.history_handler.undo()
+
+    def redo(self):
+        self.handler.history_handler.redo()
+
+    def insert_word(self, word):
+        self.handler.word_inserter_handler.insert_word(word)
+
+    def handle_tab(self, event):
+        return self.handler.nav_handler.handle_tab(event)
+    
+    def select_cell(self, row,col):
+        self.handler.nav_handler.select_cell(row, col)
+
+    def set_nav_mode(self, mode):
+        self.handler.nav_handler.set_nav_mode(mode)
+    
+    def start_edit(self, row, col):
+        self.handler.cell_editor_handler.start_edit(row, col)
+    
+    def finish_edit(self, row, col):
+        self.handler.cell_editor_handler.finish_edit(row, col)
+    
+    def export(self): 
+        return self.exporter.export(self.state)
