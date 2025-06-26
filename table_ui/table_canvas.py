@@ -12,16 +12,16 @@ class TableCanvas:
         self.state = None
         # 2D list of Entry widgets
         self.entries = []
-    def build(self, view):
+    def build(self, controller):
         """
         Build the table UI inside the root widget and initialize state and callbacks.
         """
         logger.info("Building TableCanvas UI.")
-        self.state = view.state
+        self.state = controller.state
         self.entries = []
 
         # Container for scrollable canvas and scrollbars
-        container = tk.Frame(view.root, bg=BG_COLOR)
+        container = tk.Frame(controller.root, bg=BG_COLOR)
         container.pack(fill='both', expand=True)
         logger.debug("Created container frame.")
 
@@ -47,7 +47,7 @@ class TableCanvas:
         logger.debug("Bound update_scroll_region to <Configure> event.")        
 
         # Create the initial grid of entries
-        self._rebuild(view.state, view.callbacks)
+        self._rebuild(controller.state, controller.callbacks)
 
     def _rebuild(self, state=None, callbacks=None):
         """

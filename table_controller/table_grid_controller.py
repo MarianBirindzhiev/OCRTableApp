@@ -1,16 +1,16 @@
 from utilities import BG_COLOR, LOGGER_NAME
-from .table_ui_builder import TableUIBuilder
+from table_ui import TableUIBuilder
 from .table_interaction_coordinator import TableInteractionCoordinator
 
 import logging
 
 logger = logging.getLogger(LOGGER_NAME)
 
-# === TableGridView: Wires together all table UI components and behaviors ===
-class TableGridView:
+# === TableGridController: Wires together all table UI components and behaviors ===
+class TableGridController:
     def __init__(self, root, state, nav, word_inserter, exporter, nav_bar, resize_controls, canvas_table):
         """
-        Initialize the table view with all required components.
+        Initialize the table controller with all required components.
 
         Parameters:
         - root: parent Tkinter window
@@ -40,7 +40,7 @@ class TableGridView:
         self.handler = TableInteractionCoordinator(self)
         self.ui_builder = TableUIBuilder(self)
 
-        logger.info("Initializing TableGridView UI components.")        
+        logger.info("Initializing TableGridController UI components.")        
 
     def select_cell(self, row, col): 
         self.handler.nav_handler.select_cell(row, col)

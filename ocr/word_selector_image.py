@@ -12,9 +12,9 @@ logger = logging.getLogger(LOGGER_NAME)
 
 # === Handles display and interaction with the image ===
 class WordSelectorImage:
-    def __init__(self, img, ocr_results, view, tk_container):
+    def __init__(self, img, ocr_results, controller, tk_container):
         """
-        Initializes the image viewer for OCR word selection.
+        Initializes the image controllerer for OCR word selection.
 
         Parameters:
         - img: Original (BGR) image
@@ -25,7 +25,7 @@ class WordSelectorImage:
         logger.info("Initializing WordSelectorImage...")
         self.img = img                                # Original OpenCV image (BGR)
         self.ocr_results = ocr_results                # OCR output from EasyOCR
-        self.view = view                                # Word insertion logic controller
+        self.controller = controller                                # Word insertion logic controller
         self.tk_container = tk_container                # Tkinter frame or window
 
         self.img_rgb = None                           # RGB version of image for Matplotlib
@@ -54,11 +54,11 @@ class WordSelectorImage:
 
     def setup_matplotlib(self):
         """
-        Create the Matplotlib viewer, embed it in Tkinter,
+        Create the Matplotlib controllerer, embed it in Tkinter,
         and handle mouse click events to select words.
         """
         # Setup Matplotlib figure and axes
-        logger.info("Setting up matplotlib viewer in Tkinter...")
+        logger.info("Setting up matplotlib controllerer in Tkinter...")
         self.fig, self.ax = plt.subplots(figsize=(12, 10))
         self.im_artist = self.ax.imshow(self.img_rgb)
         self.ax.axis('off')
@@ -89,7 +89,7 @@ class WordSelectorImage:
                     logger.info(f"Word selected: '{text}' at ({x},{y})")
                     try:
                         # Insert the selected word into the current table cell
-                        self.view.insert_word(text)
+                        self.controller.insert_word(text)
                         # Draw a green box to indicate selection
                         cv2.polylines(self.img_rgb, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
                         # Update the displayed image in the Matplotlib canvas
@@ -101,8 +101,8 @@ class WordSelectorImage:
 
         # Connect the click event to the above handler
         self.canvas.mpl_connect('button_press_event', on_click)
-        logger.info("Matplotlib viewer ready.")
+        logger.info("Matplotlib controllerer ready.")
 
     def show(self):
-        logger.info("Launching OCR image viewer...")
+        logger.info("Launching OCR image controllerer...")
         self.setup_matplotlib()

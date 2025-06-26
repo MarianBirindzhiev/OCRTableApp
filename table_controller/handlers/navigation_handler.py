@@ -1,14 +1,14 @@
 from utilities import LOGGER_NAME
 from table_core import GridLogicHelper
-from ..table_ui_utils.canvas_helper import CanvasLogicHelper
+from table_ui import CanvasLogicHelper
 
 import logging
 
 logger = logging.getLogger(LOGGER_NAME)
 
 class NavigationHandler:
-    def __init__(self, view):
-        self.view = view
+    def __init__(self, controller):
+        self.controller = controller
 
     def handle_tab(self):
             """
@@ -18,16 +18,16 @@ class NavigationHandler:
             logger.debug("Tab key pressed. Moving to next cell.")
 
             # Compute next logical cell
-            r, c = GridLogicHelper.next_cell_position(self.view.state, self.view.nav)
+            r, c = GridLogicHelper.next_cell_position(self.controller.state, self.controller.nav)
             logger.debug(f"Computed next position from Tab: ({r}, {c})")
 
             # If new position exceeds grid size, expand and rebuild UI
-            if GridLogicHelper.expand_if_needed(self.view.state, r, c):
+            if GridLogicHelper.expand_if_needed(self.controller.state, r, c):
                 logger.info(f"Grid expanded due to Tab key at position ({r}, {c})")
-                CanvasLogicHelper.rebuild_table(self.view)
+                CanvasLogicHelper.rebuild_table(self.controller)
 
-            CanvasLogicHelper.move_cursor_and_focus(self.view.state, self.view.nav, self.view)
-            logger.debug(f"Tab navigation complete. Current position: {self.view.state.current_pos}")
+            CanvasLogicHelper.move_cursor_and_focus(self.controller.state, self.controller.nav, self.controller)
+            logger.debug(f"Tab navigation complete. Current position: {self.controller.state.current_pos}")
             return "break"  # Prevent default tab behavior
     
 
@@ -36,13 +36,13 @@ class NavigationHandler:
         Update the currently selected cell.
         """
         logger.debug(f"Cell selected: ({row}, {col})")        
-        self.view.state.current_pos = (row, col)
-        self.view.canvas_table.highlight_active_cell()
+        self.controller.state.current_pos = (row, col)
+        self.controller.canvas_table.highlight_active_cell()
 
     def set_nav_mode(self, mode):
         """
         Callback for setting navigation mode from UI.
         """
         logger.info(f"Navigation mode changed to '{mode}'")        
-        self.view.nav.set_mode(mode)
-        self.view.nav_bar.update_mode_buttons(mode)
+        self.controller.nav.set_mode(mode)
+        self.controller.nav_bar.update_mode_buttons(mode)

@@ -7,22 +7,22 @@ class CanvasLogicHelper:
     """
 
     @staticmethod
-    def move_cursor_and_focus(state, nav, view):
+    def move_cursor_and_focus(state, nav, controller):
         """
         Advances the cursor to the next cell and sets keyboard focus.
         """
         r, c = state.current_pos
         r, c = nav.next_position(r, c, state.rows, state.cols)
         state.current_pos = (r, c)
-        view.canvas_table.highlight_active_cell()
-        view.canvas_table.entries[r][c].focus_set()
+        controller.canvas_table.highlight_active_cell()
+        controller.canvas_table.entries[r][c].focus_set()
 
     @staticmethod
-    def rebuild_table(view):
+    def rebuild_table(controller):
         """
         Rebuilds the visual grid and reconnects callbacks.
         """
-        view.canvas_table._rebuild(
-            view.state,
-            view.callbacks
+        controller.canvas_table._rebuild(
+            controller.state,
+            controller.callbacks
         )

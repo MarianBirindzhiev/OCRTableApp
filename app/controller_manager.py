@@ -1,7 +1,7 @@
 from .components_manager import ComponentsManager
 from .window_manager import WindowManager
 from utilities import LOGGER_NAME
-from table_ui import TableGridView
+from table_controller import TableGridController
 
 import logging
 
@@ -15,7 +15,7 @@ class ControllerManager:
         self.window_manager = WindowManager()
         self.components_manager = ComponentsManager(rows, cols)
 
-        self.view = TableGridView(
+        self.controller = TableGridController(
             root=self.window_manager.table_window,
             state=self.components_manager.state_manager,
             nav=self.components_manager.nav_controller,

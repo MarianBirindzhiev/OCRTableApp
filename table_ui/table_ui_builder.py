@@ -4,23 +4,23 @@ import logging
 logger = logging.getLogger(LOGGER_NAME)
 
 class TableUIBuilder:
-    def __init__(self, view):
-        self.view = view
+    def __init__(self, controller):
+        self.controller = controller
         logger.info(f"TableUIBuilder initialized with components.")
         self.setup_ui()
 
     def setup_ui(self):
         logger.info("Building UI components...")
-        self.view.nav_bar.build(self.view.root, self.view.set_nav_mode, self.view.undo,
-                           self.view.redo, self.view.export)
+        self.controller.nav_bar.build(self.controller.root, self.controller.set_nav_mode, self.controller.undo,
+                           self.controller.redo, self.controller.export)
 
-        self.view.resize_controls.build(self.view.root, self.view.apply_size_from_input)
+        self.controller.resize_controls.build(self.controller.root, self.controller.apply_size_from_input)
 
-        self.view.canvas_table.build(self.view)
+        self.controller.canvas_table.build(self.controller)
         self.bind_shortcuts()
-        self.view.canvas_table.highlight_active_cell()
+        self.controller.canvas_table.highlight_active_cell()
 
     def bind_shortcuts(self):
-        self.view.root.bind('<Control-z>', lambda event: self.view.undo())
-        self.view.root.bind('<Control-y>', lambda event: self.view.redo())
-        self.view.root.bind("<Tab>",       lambda event: self.view.handle_tab())
+        self.controller.root.bind('<Control-z>', lambda event: self.controller.undo())
+        self.controller.root.bind('<Control-y>', lambda event: self.controller.redo())
+        self.controller.root.bind("<Tab>",       lambda event: self.controller.handle_tab())

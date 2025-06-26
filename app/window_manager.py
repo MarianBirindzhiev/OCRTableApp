@@ -13,7 +13,7 @@ class WindowManager:
 
     def _setup(self):
         self.root = tk.Tk()
-        self.root.title("OCR Image Viewer")
+        self.root.title("OCR Image controllerer")
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
         self.table_window = tk.Toplevel(self.root)
         self.table_window.title("Table Grid")

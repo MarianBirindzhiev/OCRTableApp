@@ -6,7 +6,7 @@ logger = logging.getLogger(LOGGER_NAME)
 
 
 class CellEditHandler:
-    def __init__(self, view):
+    def __init__(self, controller):
         """
         Initialize the handler with the canvas table and state manager.
         
@@ -14,7 +14,7 @@ class CellEditHandler:
         - canvas_table: The TableCanvas instance that renders the grid
         - state: GridStateManager instance that holds cell data and current position
         """
-        self.view = view
+        self.controller = controller
         self._editing_cell = None
         self._editing_original_value = None
 
@@ -24,7 +24,7 @@ class CellEditHandler:
         """
         logger.debug(f"Started editing cell: ({row}, {col})")        
         self._editing_cell = (row, col)
-        self._editing_original_value = self.view.canvas_table.get_entry_value(row, col)
+        self._editing_original_value = self.controller.canvas_table.get_entry_value(row, col)
 
     def finish_edit(self, row, col):
         """
@@ -32,9 +32,9 @@ class CellEditHandler:
         """
         if self._editing_cell != (row, col):
             return
-        new_value = self.view.canvas_table.get_entry_value(row, col)
+        new_value = self.controller.canvas_table.get_entry_value(row, col)
         if new_value != self._editing_original_value:
             logger.info(f"Cell ({row}, {col}) updated from '{self._editing_original_value}' to '{new_value}'")            
-            self.view.state.save_state()
-            self.view.state.set_cell(row, col, new_value)
+            self.controller.state.save_state()
+            self.controller.state.set_cell(row, col, new_value)
             self._editing_original_value = new_value
