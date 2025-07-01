@@ -18,4 +18,4 @@ class OCRProcessorManager:
             raise SystemExit(1)
         self.ocr = OCRReader(language=args.lang)
         ocr_results = self.ocr.read(self.processor.gray_enhanced)
-        self.image = WordSelectorImage(self.processor.img, ocr_results, controller.controller, controller.window_manager.root)
+        self.image = WordSelectorImage(self.processor.img, ocr_results, controller.controller, controller.window_manager.table_window)

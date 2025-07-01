@@ -8,7 +8,7 @@ logger = logging.getLogger(LOGGER_NAME)
 
 # === TableGridController: Wires together all table UI components and behaviors ===
 class TableGridController:
-    def __init__(self, root, state, nav, word_inserter, exporter, nav_bar, resize_controls, canvas_table):
+    def __init__(self, window_manager, state, nav, word_inserter, exporter, nav_bar, resize_controls, canvas_table):
         """
         Initialize the table controller with all required components.
 
@@ -22,7 +22,7 @@ class TableGridController:
         - resize_controls: ResizeControls (row/col adjustment)
         - canvas_table: TableCanvas (grid rendering)
         """
-        self.root = root
+        self.window_manaer =window_manager
         self.state = state
         self.nav = nav
         self.word_inserter = word_inserter
@@ -36,6 +36,7 @@ class TableGridController:
             "start_edit": self.start_edit,
             "finish_edit": self.finish_edit,
         }
+        self.root = window_manager.root
 
         self.handler = TableInteractionCoordinator(self)
         self.ui_builder = TableUIBuilder(self)

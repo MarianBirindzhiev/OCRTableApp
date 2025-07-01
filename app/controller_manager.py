@@ -16,7 +16,7 @@ class ControllerManager:
         self.components_manager = ComponentsManager(rows, cols)
 
         self.controller = TableGridController(
-            root=self.window_manager.table_window,
+            window_manager = self.window_manager,
             state=self.components_manager.state_manager,
             nav=self.components_manager.nav_controller,
             word_inserter=self.components_manager.word_inserter,
