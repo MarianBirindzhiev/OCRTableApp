@@ -34,9 +34,6 @@ class EditCellCommand(Command):
         self.grid_state.grid_data[self.row][self.col] = self.old_text
         self.grid_state.current_pos = (self.row, self.col)
         logger.info(f"Cell ({self.row}, {self.col}) restored to '{self.old_text}'")
-    
-    def redo(self):
-        return self.execute()
 
     def _is_valid_cell(self) -> bool:
         return (

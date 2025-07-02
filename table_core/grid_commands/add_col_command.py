@@ -35,17 +35,3 @@ class AddColumnCommand(Command):
             row.pop()
         self.grid_state.cols -= 1
         logger.info(f"Column removed from index {self.added_col_index}")
-
-    def redo(self):
-        return self.execute()
-
-'''
-    def redo(self):
-        logger.info("Redoing AddColumnCommand...")
-        for i, row in enumerate(self.grid_state.grid_data):
-            # Use saved values if available
-            value = self.removed_cells[i] if i < len(self.removed_cells) else ''
-            row.append(value)
-        self.grid_state.cols += 1
-        logger.info(f"Column re-added at index {self.added_col_index}")
-'''

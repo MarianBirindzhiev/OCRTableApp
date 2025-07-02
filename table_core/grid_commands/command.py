@@ -10,8 +10,3 @@ class Command(ABC):
     def undo(self):
         """Undo the action, reverting state to before execute()."""
         raise NotImplementedError("Subclasses should implement this method")
-
-    @abstractmethod    
-    def redo(self):
-        """Redo the action, re-executing the command."""
-        raise NotImplementedError("Subclasses should implement this method")

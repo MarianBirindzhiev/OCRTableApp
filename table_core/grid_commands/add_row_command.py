@@ -30,13 +30,3 @@ class AddRowCommand(Command):
         # Validate match with what was inserted
         if removed_row != self.old_row_data:
             logger.warning("Removed row does not match original inserted row.")
-
-    def redo(self):
-        return self.execute()
-'''
-    def redo(self):
-        logger.info("Redoing AddRowCommand...")
-        self.grid_state.grid_data.append(self.old_row_data.copy())
-        self.grid_state.rows += 1
-        logger.info("Row re-added at index %d", self.added_row_index)
-'''

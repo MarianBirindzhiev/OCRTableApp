@@ -30,7 +30,3 @@ class InsertWordCommand(Command):
     def undo(self):
         logger.info(f"Undoing word insertion in cell ({self.row}, {self.col}): restoring '{self.old_text}'")
         self.edit_command.undo()
-
-    def redo(self):
-        logger.info(f"Redoing word insertion in cell ({self.row}, {self.col})")
-        return self.edit_command.redo()

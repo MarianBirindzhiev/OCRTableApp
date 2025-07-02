@@ -25,9 +25,6 @@ class ResizeGridCommand(Command):
         logger.info(f"Undoing ResizeGridCommand: Restoring size to {self.old_rows}x{self.old_cols}")
         self._resize(self.old_rows, self.old_cols, self.old_grid, self.old_pos)
 
-    def redo(self):
-        return self.execute()
-
     def _resize(self, rows, cols, grid=None, pos=None):
         new_grid = [['' for _ in range(cols)] for _ in range(rows)]
 
