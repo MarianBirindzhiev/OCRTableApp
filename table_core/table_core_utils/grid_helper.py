@@ -1,12 +1,14 @@
+from table_core.grid_commands import AddColumnCommand, AddRowCommand
+
 class GridLogicHelper:
     @staticmethod
     def expand_if_needed(state, row, column):
         expanded = False
         if row >= state.rows - 1:
-            state.add_row()
+            state.execute(AddRowCommand(state))
             expanded = True
         if column >= state.cols - 1:
-            state.add_column()
+            state.execute(AddColumnCommand(state))
             expanded = True
         return expanded
 

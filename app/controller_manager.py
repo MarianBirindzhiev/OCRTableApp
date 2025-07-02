@@ -19,7 +19,6 @@ class ControllerManager:
             window_manager = self.window_manager,
             state=self.components_manager.state_manager,
             nav=self.components_manager.nav_controller,
-            word_inserter=self.components_manager.word_inserter,
             exporter=self.components_manager.exporter,
             nav_bar=self.components_manager.nav_bar,
             resize_controls=self.components_manager.resize_controls,

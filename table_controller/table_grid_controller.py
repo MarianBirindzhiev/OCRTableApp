@@ -8,7 +8,7 @@ logger = logging.getLogger(LOGGER_NAME)
 
 # === TableGridController: Wires together all table UI components and behaviors ===
 class TableGridController:
-    def __init__(self, window_manager, state, nav, word_inserter, exporter, nav_bar, resize_controls, canvas_table):
+    def __init__(self, window_manager, state, nav, exporter, nav_bar, resize_controls, canvas_table):
         """
         Initialize the table controller with all required components.
 
@@ -16,7 +16,6 @@ class TableGridController:
         - root: parent Tkinter window
         - state: GridStateManager (holds grid content and state)
         - nav: NavigationController (handles direction logic)
-        - word_inserter: WordInserter (inserts OCR words into grid)
         - exporter: IExporter (e.g. CSVExporter)
         - nav_bar: NavigationBar (direction buttons)
         - resize_controls: ResizeControls (row/col adjustment)
@@ -25,7 +24,6 @@ class TableGridController:
         self.window_manaer =window_manager
         self.state = state
         self.nav = nav
-        self.word_inserter = word_inserter
         self.exporter = exporter
         self.canvas_table = canvas_table
         self.nav_bar = nav_bar

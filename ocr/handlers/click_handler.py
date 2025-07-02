@@ -1,6 +1,7 @@
 import numpy as np
 import logging
 from utilities import LOGGER_NAME
+from table_core.grid_commands import InsertWordCommand
 
 logger = logging.getLogger(LOGGER_NAME)
 

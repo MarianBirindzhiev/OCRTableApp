@@ -1,5 +1,6 @@
 from utilities import LOGGER_NAME
 from table_ui import CanvasLogicHelper
+from table_core.grid_commands import ResizeGridCommand
 
 import logging
 
@@ -19,6 +20,6 @@ class ResizeHandler:
         new_rows, new_cols = self.controller.resize_controls.get_dimensions()
         logger.info(f"Applying resize: rows={new_rows}, cols={new_cols}")        
         if new_rows and new_cols:
-            self.controller.state.resize(new_rows, new_cols)
+            self.controller.state.execute(ResizeGridCommand(self.controller.state, new_rows, new_cols))
             CanvasLogicHelper.rebuild_table(self.controller)
             logger.debug("Canvas rebuilt after resize.")

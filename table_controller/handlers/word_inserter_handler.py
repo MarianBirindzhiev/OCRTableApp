@@ -1,6 +1,7 @@
 from utilities import LOGGER_NAME
-from table_core import GridLogicHelper
+from table_core import GridLogicHelper, GridStateManager
 from table_ui import CanvasLogicHelper
+from table_core.grid_commands import InsertWordCommand
 
 import tkinter as tk
 import logging
@@ -22,7 +23,10 @@ class WordInserterHandler:
         and moving the cursor to the next cell.
         """        
         # Use WordInserter to insert the word and get the new position
-        r, c, new_text = self.controller.word_inserter.insert_word(word)
+        command = InsertWordCommand(self.controller.state, self.controller.nav, word)
+        self.controller.state.execute(command)
+
+        r, c, new_text = command.result
         logger.info(f"Inserted word '{word}' at ({r}, {c}). New text: '{new_text}'")
  
         # If new position exceeds grid size, expand and rebuild UI

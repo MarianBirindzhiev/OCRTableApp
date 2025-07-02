@@ -1,4 +1,5 @@
 from utilities import LOGGER_NAME
+from table_core.grid_commands import EditCellCommand
 
 import logging
 
@@ -35,6 +36,5 @@ class CellEditHandler:
         new_value = self.controller.canvas_table.get_entry_value(row, col)
         if new_value != self._editing_original_value:
             logger.info(f"Cell ({row}, {col}) updated from '{self._editing_original_value}' to '{new_value}'")            
-            self.controller.state.save_state()
-            self.controller.state.set_cell(row, col, new_value)
+            self.controller.state.execute(EditCellCommand(self.controller.state, row, col, new_value))
             self._editing_original_value = new_value
