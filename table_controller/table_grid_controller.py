@@ -21,7 +21,7 @@ class TableGridController:
         - resize_controls: ResizeControls (row/col adjustment)
         - canvas_table: TableCanvas (grid rendering)
         """
-        self.window_manaer =window_manager
+        self.window_manager = window_manager
         self.state = state
         self.command_manager = command_manager
         self.nav = nav
@@ -35,6 +35,15 @@ class TableGridController:
             "start_edit": self.start_edit,
             "finish_edit": self.finish_edit,
         }
+
+        self.navigation_items = {
+            "nav_mode": self.set_nav_mode,
+            "undo": self.undo,
+            "redo": self.redo,
+            "export": self.export,
+            "screenshot_ocr": self.take_screenshot_and_ocr
+        }
+
         self.root = window_manager.root
 
         self.handler = TableInteractionCoordinator(self)
@@ -74,3 +83,6 @@ class TableGridController:
     
     def export(self): 
         return self.exporter.export(self.state.grid_data)
+    
+    def take_screenshot_and_ocr(self):
+        self.handler.screenshot_ocr_handler.start_ocr_processing()

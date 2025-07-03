@@ -12,7 +12,7 @@ class TableOCRApp:
     def __init__(self, rows: int = ROWS_DEFAULT, cols: int = COLS_DEFAULT, args: argparse.Namespace = None):
         logger.info("Initializing OCR Table application...")
         self.controller = ControllerManager(rows, cols)
-        self.processor = OCRProcessorManager(args,self.controller)
+        self.processor = OCRProcessorManager(args, self.controller.table_grid_controller)
 
     def run(self):
         logger.info("Launching application UI.")

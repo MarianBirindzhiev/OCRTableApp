@@ -11,7 +11,7 @@ class NavigationBar:
         self.mode_buttons = {}
         logger.debug("NavigationBar initialized.")
 
-    def build(self, root, on_mode_change, on_undo, on_redo, on_export):
+    def build(self, controller):
         """
         Build the navigation bar UI and attach it to the root window.
 
@@ -23,7 +23,7 @@ class NavigationBar:
         - on_export: callback to export the grid data
         """
         logger.info("Building navigation bar UI.")
-        self.nav_frame = tk.Frame(root, bg=BG_COLOR)
+        self.nav_frame = tk.Frame(controller.root, bg=BG_COLOR)
         self.nav_frame.pack(pady=8)
 
         for mode in ("→", "↓", "⟳"):
@@ -34,15 +34,16 @@ class NavigationBar:
                 font=FONT, bg=BUTTON_COLOR,
                 activebackground=BUTTON_HIGHLIGHT,
                 relief="groove", padx=12, pady=6,
-                command=lambda m=mode: on_mode_change(m) # Capture current mode in lambda
+                command=lambda m=mode: controller.navigation_items["nav_mode"](m) # Capture current mode in lambda
             )
             btn.pack(side='left', padx=4)  # Arrange buttons horizontally
             self.mode_buttons[mode] = btn
         # Create action buttons (Undo, Redo, Export)
         for text, command in [
-            ("Undo", on_undo),
-            ("Redo", on_redo),
-            ("Export", on_export)
+            ("Undo", controller.navigation_items["undo"]),
+            ("Redo", controller.navigation_items["redo"]),
+            ("Export", controller.navigation_items["export"]),
+            ("Screenshot & OCR", controller.navigation_items["screenshot_ocr"])
         ]:
             logger.debug(f"Creating action button: {text}")            
             tk.Button(

@@ -11,8 +11,7 @@ class TableUIBuilder:
 
     def setup_ui(self):
         logger.info("Building UI components...")
-        self.controller.nav_bar.build(self.controller.root, self.controller.set_nav_mode, self.controller.undo,
-                           self.controller.redo, self.controller.export)
+        self.controller.nav_bar.build(self.controller)
 
         self.controller.resize_controls.build(self.controller.root, self.controller.apply_size_from_input)
 
@@ -24,3 +23,4 @@ class TableUIBuilder:
         self.controller.root.bind('<Control-z>', lambda event: self.controller.undo())
         self.controller.root.bind('<Control-y>', lambda event: self.controller.redo())
         self.controller.root.bind("<Tab>",       lambda event: self.controller.handle_tab())
+        self.controller.root.bind("<Print>",  lambda event: self.controller.take_screenshot_and_ocr())
