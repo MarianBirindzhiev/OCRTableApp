@@ -18,6 +18,7 @@ class ControllerManager:
         self.controller = TableGridController(
             window_manager = self.window_manager,
             state=self.components_manager.state_manager,
+            command_manager=self.components_manager.command_manager,
             nav=self.components_manager.nav_controller,
             exporter=self.components_manager.exporter,
             nav_bar=self.components_manager.nav_bar,

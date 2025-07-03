@@ -24,13 +24,13 @@ class WordInserterHandler:
         """        
         # Use WordInserter to insert the word and get the new position
         command = InsertWordCommand(self.controller.state, self.controller.nav, word)
-        self.controller.state.execute(command)
+        self.controller.command_manager.execute(command)
 
         r, c, new_text = command.result
         logger.info(f"Inserted word '{word}' at ({r}, {c}). New text: '{new_text}'")
  
         # If new position exceeds grid size, expand and rebuild UI
-        if GridLogicHelper.expand_if_needed(self.controller.state, r, c):
+        if GridLogicHelper.expand_if_needed(self.controller.state, r, c, self.controller.command_manager):
             logger.info(f"Grid expanded due to Tab key at position ({r}, {c})")
             CanvasLogicHelper.rebuild_table(self.controller)
 

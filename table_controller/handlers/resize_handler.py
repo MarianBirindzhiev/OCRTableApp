@@ -20,6 +20,6 @@ class ResizeHandler:
         new_rows, new_cols = self.controller.resize_controls.get_dimensions()
         logger.info(f"Applying resize: rows={new_rows}, cols={new_cols}")        
         if new_rows and new_cols:
-            self.controller.state.execute(ResizeGridCommand(self.controller.state, new_rows, new_cols))
+            self.controller.command_manager.execute(ResizeGridCommand(self.controller.state, new_rows, new_cols))
             CanvasLogicHelper.rebuild_table(self.controller)
             logger.debug("Canvas rebuilt after resize.")

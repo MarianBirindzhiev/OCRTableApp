@@ -36,5 +36,5 @@ class CellEditHandler:
         new_value = self.controller.canvas_table.get_entry_value(row, col)
         if new_value != self._editing_original_value:
             logger.info(f"Cell ({row}, {col}) updated from '{self._editing_original_value}' to '{new_value}'")            
-            self.controller.state.execute(EditCellCommand(self.controller.state, row, col, new_value))
+            self.controller.command_manager.execute(EditCellCommand(self.controller.state, row, col, new_value))
             self._editing_original_value = new_value

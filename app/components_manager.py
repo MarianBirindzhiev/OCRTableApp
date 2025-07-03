@@ -1,4 +1,4 @@
-from table_core import GridStateManager, NavigationController
+from table_core import GridStateManager, NavigationController, GridCommandManager
 from table_ui import  NavigationBar, ResizeControls, TableCanvas
 from utilities import CSVExporter, LOGGER_NAME
 
@@ -12,6 +12,7 @@ class ComponentsManager:
     """
     def __init__(self, rows, cols):
         self.state_manager      = GridStateManager(rows, cols)
+        self.command_manager    = GridCommandManager()
         self.nav_controller     = NavigationController()
         self.exporter           = CSVExporter()
         self.nav_bar            = NavigationBar()

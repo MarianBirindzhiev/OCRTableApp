@@ -17,7 +17,7 @@ class HistoryHandler:
         Undo the last grid operation.
         """
         logger.info("Undo triggered.")
-        self.controller.state.undo()
+        self.controller.command_manager.undo()
         CanvasLogicHelper.rebuild_table(self.controller)
 
     def redo(self):
@@ -25,5 +25,5 @@ class HistoryHandler:
         Redo the last undone operation.
         """
         logger.info("Redo triggered.")
-        self.controller.state.redo()
+        self.controller.command_manager.redo()
         CanvasLogicHelper.rebuild_table(self.controller)

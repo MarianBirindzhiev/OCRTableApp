@@ -22,7 +22,7 @@ class NavigationHandler:
             logger.debug(f"Computed next position from Tab: ({r}, {c})")
 
             # If new position exceeds grid size, expand and rebuild UI
-            if GridLogicHelper.expand_if_needed(self.controller.state, r, c):
+            if GridLogicHelper.expand_if_needed(self.controller.state, r, c, self.controller.command_manager):
                 logger.info(f"Grid expanded due to Tab key at position ({r}, {c})")
                 CanvasLogicHelper.rebuild_table(self.controller)
 
