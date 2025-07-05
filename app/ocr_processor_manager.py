@@ -15,7 +15,7 @@ class OCRProcessorManager:
             self.processor = OCRImageProcessor(args.image_path, args.scale_percent)
         except FileNotFoundError as e:
             logger.error(f"Failed to load image: {e}")
-            raise SystemExit(1)
+            raise e
         
         self.ocr = OCRReader(language=args.lang)
         ocr_results = self.ocr.read(self.processor.gray_enhanced)

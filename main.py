@@ -12,11 +12,16 @@ class TableOCRApp:
     def __init__(self, rows: int = ROWS_DEFAULT, cols: int = COLS_DEFAULT, args: argparse.Namespace = None):
         logger.info("Initializing OCR Table application...")
         self.controller = ControllerManager(rows, cols)
-        self.processor = OCRProcessorManager(args, self.controller.table_grid_controller)
+        try:
+            self.processor = OCRProcessorManager(args, self.controller.table_grid_controller)
+        except FileNotFoundError as e:
+            self.processor = None
 
     def run(self):
         logger.info("Launching application UI.")
-        self.processor.image.show()
+        if self.processor:
+            self.processor.image.show()
+        
         self.controller.window_manager.root.mainloop()
 
 if __name__ == "__main__":
