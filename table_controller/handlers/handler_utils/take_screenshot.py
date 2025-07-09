@@ -1,10 +1,11 @@
-from .handler_helper import generate_screenshot_filename
+from .handler_helper import generate_screenshot_filename, get_virtual_screen_bbox
 from utilities import LOGGER_NAME
 
 from tkinter import Tk, Toplevel, Canvas, Label, BOTH
-from PIL import ImageGrab
+from PIL import Image
 import logging
 import sys
+import mss
 
 logger = logging.getLogger(LOGGER_NAME)
 
@@ -18,17 +19,15 @@ class SnipTool(Toplevel):
         super().__init__(master)
         self.on_snip_done_callback = on_snip_done_callback
 
+        self.vx, self.vy, self.vw, self.vh = get_virtual_screen_bbox()
+        self.geometry(f"{self.vw}x{self.vh}+{self.vx}+{self.vy}")
+
         # Setup window transparency and background
-        if sys.platform != "darwin":
-            self.attributes('-fullscreen', True)
-        else:   
-            # make a borderless full‐screen window
-            self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}+0+0")
-            self.overrideredirect(True)
-            self.lift()
-      
-            # keep it always on top
-            self.attributes('-topmost', True)
+        self.overrideredirect(True)
+        self.lift()
+    
+        # keep it always on top
+        self.attributes('-topmost', True)
         
         self.attributes('-alpha', 0.15)
         self.config(bg='#121212')  # Subtle dark overlay
@@ -100,19 +99,23 @@ class SnipTool(Toplevel):
         self.withdraw()
         self.update()
 
-        x1, y1 = int(min(self.start_x, self.end_x)), int(min(self.start_y, self.end_y))
-        x2, y2 = int(max(self.start_x, self.end_x)), int(max(self.start_y, self.end_y))
-
+        x1 = int(min(self.start_x, self.end_x)) + self.vx
+        y1 = int(min(self.start_y, self.end_y)) + self.vy
+        x2 = int(max(self.start_x, self.end_x)) + self.vx
+        y2 = int(max(self.start_y, self.end_y)) + self.vy
         logger.debug(f"Selection completed: ({x1}, {y1}) to ({x2}, {y2})")
 
         # Capture and save the screenshot
         if x2 > x1 and y2 > y1:
             try:
-                img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
-                file_path = generate_screenshot_filename()
-                img.save(file_path)
-                logger.info(f"Screenshot saved to {file_path}")
-                self.on_snip_done_callback(file_path)
+                with mss.mss() as sct:
+                    monitor = {"left": x1, "top": y1, "width": x2 - x1, "height": y2 - y1}
+                    sct_img = sct.grab(monitor)
+                    img = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
+                    file_path = generate_screenshot_filename()
+                    img.save(file_path)
+                    logger.info(f"Screenshot saved to {file_path}")
+                    self.on_snip_done_callback(file_path)
             except Exception as e:
                 logger.error(f"Failed to capture screenshot: {e}")
         else:
