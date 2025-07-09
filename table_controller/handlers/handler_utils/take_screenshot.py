@@ -4,6 +4,7 @@ from utilities import LOGGER_NAME
 from tkinter import Tk, Toplevel, Canvas, Label, BOTH
 from PIL import ImageGrab
 import logging
+import sys
 
 logger = logging.getLogger(LOGGER_NAME)
 
@@ -18,7 +19,17 @@ class SnipTool(Toplevel):
         self.on_snip_done_callback = on_snip_done_callback
 
         # Setup window transparency and background
-        self.attributes('-fullscreen', True)
+        if sys.platform != "darwin":
+            self.attributes('-fullscreen', True)
+        else:   
+            # make a borderless full‐screen window
+            self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}+0+0")
+            self.overrideredirect(True)
+            self.lift()
+      
+            # keep it always on top
+            self.attributes('-topmost', True)
+        
         self.attributes('-alpha', 0.15)
         self.config(bg='#121212')  # Subtle dark overlay
 

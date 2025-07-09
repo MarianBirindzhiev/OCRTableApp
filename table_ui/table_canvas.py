@@ -71,6 +71,13 @@ class TableCanvas:
                 e.bind("<Button-1>", lambda event, row=r, col=c: callbacks["select_cell"](row, col))
                 e.bind("<FocusIn>", lambda event, row=r, col=c: callbacks["start_edit"](row, col))
                 e.bind("<KeyRelease>", lambda event, row=r, col=c: callbacks["finish_edit"](row, col))
+                
+                # Bind arrow keys for navigation
+                e.bind("<Up>", lambda event, row=r, col=c: self._navigate_up(row, col, callbacks))
+                e.bind("<Down>", lambda event, row=r, col=c: self._navigate_down(row, col, callbacks))
+                e.bind("<Left>", lambda event, row=r, col=c: self._navigate_left(row, col, callbacks))
+                e.bind("<Right>", lambda event, row=r, col=c: self._navigate_right(row, col, callbacks))
+                
                 row_entries.append(e)
                 logger.debug(f"Entry ({r}, {c}) initialized with value: '{self.state.get_cell(r, c)}'") 
             self.entries.append(row_entries)
@@ -79,6 +86,33 @@ class TableCanvas:
         self.highlight_active_cell()
         self.update_scroll_region()
 
+    def _navigate_up(self, row, col, callbacks):
+        """Navigate to the cell above if it exists."""
+        if row > 0:
+            callbacks["select_cell"](row - 1, col)
+            self.entries[row - 1][col].focus_set()
+            logger.debug(f"Navigated up from ({row}, {col}) to ({row - 1}, {col})")
+
+    def _navigate_down(self, row, col, callbacks):
+        """Navigate to the cell below if it exists."""
+        if row < self.state.rows - 1:
+            callbacks["select_cell"](row + 1, col)
+            self.entries[row + 1][col].focus_set()
+            logger.debug(f"Navigated down from ({row}, {col}) to ({row + 1}, {col})")
+
+    def _navigate_left(self, row, col, callbacks):
+        """Navigate to the cell on the left if it exists."""
+        if col > 0:
+            callbacks["select_cell"](row, col - 1)
+            self.entries[row][col - 1].focus_set()
+            logger.debug(f"Navigated left from ({row}, {col}) to ({row}, {col - 1})")
+
+    def _navigate_right(self, row, col, callbacks):
+        """Navigate to the cell on the right if it exists."""
+        if col < self.state.cols - 1:
+            callbacks["select_cell"](row, col + 1)
+            self.entries[row][col + 1].focus_set()
+            logger.debug(f"Navigated right from ({row}, {col}) to ({row}, {col + 1})")
 
     def highlight_active_cell(self):
         """
@@ -103,4 +137,4 @@ class TableCanvas:
         Adjust the scroll region based on the content size.
         """
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-        logger.debug("Updated scroll region of the canvas.")        
+        logger.debug("Updated scroll region of the canvas.")
