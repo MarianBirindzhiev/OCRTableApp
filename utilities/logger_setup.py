@@ -1,9 +1,11 @@
+from .helper_funcs import resource_path
+
 import logging
 import os
 import sys
 
-LOGGER_NAME = "ocr_table_app"
-LOGGING_PATH = "logs/ocr_table_app.log"
+LOGGER_NAME = resource_path("ocr_table_app")
+LOGGING_PATH = resource_path("logs\\ocr_table_app.log")
 
 def setup_logger():
     """
@@ -21,7 +23,7 @@ def setup_logger():
     if not logger.hasHandlers():
         # === File handler (UTF-8 safe) ===
         file_handler = logging.FileHandler(LOGGING_PATH, encoding='utf-8')
-        
+        '''
         # === Console handler (safe for cp1251 terminals) ===
         class SafeStreamHandler(logging.StreamHandler):
             def emit(self, record):
@@ -37,13 +39,14 @@ def setup_logger():
 
         console_handler = SafeStreamHandler(stream=sys.stdout)
 
+        '''
         # Format for all outputs
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         file_handler.setFormatter(formatter)
-        console_handler.setFormatter(formatter)
+        #console_handler.setFormatter(formatter)
 
         # Add both handlers
         logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
+        #logger.addHandler(console_handler)
 
     return logger
