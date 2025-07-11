@@ -7,7 +7,16 @@ __pycache__/
 .vscode/
 
 # Logs
+logs/
 *.log
 
 # Test images 
 *.png
+
+#Virtual environment
+.venv
+
+# Distrubution / packaging
+build/
+dist/
+*.spec

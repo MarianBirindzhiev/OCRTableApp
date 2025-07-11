@@ -66,6 +66,6 @@ class NavigationBar:
         logger.info(f"Navigation mode changed to: {active_mode}")
         for mode, btn in self.mode_buttons.items():
             if mode == active_mode:
-                btn.config(state="active")
+                btn.config(state="active", bg = BUTTON_ACTIVE_MODE)
             else:
-                btn.config(state="normal")
+                btn.config(state="normal", bg = BUTTON_COLOR)
