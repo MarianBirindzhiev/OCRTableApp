@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
       - name: 🧾 Checkout repository
@@ -25,24 +25,35 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: 🔍 Debug workspace
-        run: |
-          pwd
-          ls -R
-
       - name: 🏗️ Build executable with PyInstaller
         run: |
-          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns main.py
+          pyinstaller \
+            --name SnapTable \
+            --windowed \
+            --icon=assets/logo.icns \
+            --osx-bundle-identifier=net.vectorworks.snaptable \
+            main.py
           ls dist
 
-      - name: 🧩 Create and inject Info.plist to force Light Mode
+      - name: 🧼 Remove quarantine attribute (optional)
+        run: |
+          xattr -rd com.apple.quarantine dist/SnapTable.app || true
+
+      - name: 🧩 Inject custom Info.plist to force Light Mode
         run: |
           cat <<EOF > dist/SnapTable.app/Contents/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-             "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
+              <key>CFBundleName</key>
+              <string>SnapTable</string>
+              <key>CFBundleIdentifier</key>
+              <string>net.vectorworks.snaptable</string>
+              <key>CFBundleVersion</key>
+              <string>1.0</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
               <key>NSRequiresAquaSystemAppearance</key>
               <true/>
           </dict>
@@ -50,10 +61,10 @@ jobs:
           EOF
           plutil -lint dist/SnapTable.app/Contents/Info.plist
 
-      - name: 📦 Zip .app bundle
+      - name: 📦 Zip .app bundle properly using ditto
         run: |
           cd dist
-          zip -r SnapTable.app.zip SnapTable.app
+          ditto -c -k --sequesterRsrc --keepParent SnapTable.app SnapTable.app.zip
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
