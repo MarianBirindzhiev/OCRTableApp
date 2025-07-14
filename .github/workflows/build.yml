@@ -15,7 +15,7 @@ jobs:
           - os: macos-latest
             icon: assets/logo.icns
             pyinstaller_args: --name SnapTable --onefile --windowed --icon=assets/logo.icns main.py
-            artifact: dist/SnapTable.app
+            artifact: dist/SnapTable.app.zip
           - os: windows-latest
             icon: assets/logo.ico
             pyinstaller_args: --name SnapTable --onefile --windowed --icon=assets/logo.ico main.py
@@ -45,6 +45,12 @@ jobs:
         run: |
           pyinstaller ${{ matrix.pyinstaller_args }}
           ls dist
+
+      - name: 📦 Zip .app bundle (macOS only)
+        if: runner.os == 'macOS'
+        run: |
+          cd dist
+          zip -r SnapTable.app.zip SnapTable.app
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
