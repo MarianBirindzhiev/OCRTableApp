@@ -35,6 +35,21 @@ jobs:
           pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.icns main.py
           ls dist
 
+      - name: 🧩 Create and inject Info.plist to force Light Mode
+        run: |
+          cat <<EOF > dist/SnapTable.app/Contents/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+             "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>NSRequiresAquaSystemAppearance</key>
+              <true/>
+          </dict>
+          </plist>
+          EOF
+          plutil -lint dist/SnapTable.app/Contents/Info.plist
+
       - name: 📦 Zip .app bundle
         run: |
           cd dist
