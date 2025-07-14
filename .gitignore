@@ -20,6 +20,3 @@ logs/
 build/
 dist/
 *.spec
-
-# Assets
-assets/
