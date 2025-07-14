@@ -25,15 +25,9 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: 🔍 Debug workspace
-        run: |
-          pwd
-          dir /s
-
       - name: 🏗️ Build executable with PyInstaller
         run: |
           pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.ico main.py
-          dir dist
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
