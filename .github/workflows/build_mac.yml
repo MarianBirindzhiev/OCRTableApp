@@ -1,0 +1,50 @@
+name: Build and Release OCR App (macOS)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: 🧾 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: 🔍 Debug workspace
+        run: |
+          pwd
+          ls -R
+
+      - name: 🏗️ Build executable with PyInstaller
+        run: |
+          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.icns main.py
+          ls dist
+
+      - name: 📦 Zip .app bundle
+        run: |
+          cd dist
+          zip -r SnapTable.app.zip SnapTable.app
+
+      - name: 🚀 Upload App to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "SnapTable v${{ github.ref_name }}"
+          files: dist/SnapTable.app.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,45 @@
+name: Build and Release OCR App (Windows)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: 🧾 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: 🔍 Debug workspace
+        run: |
+          pwd
+          dir /s
+
+      - name: 🏗️ Build executable with PyInstaller
+        run: |
+          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.ico main.py
+          dir dist
+
+      - name: 🚀 Upload App to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "SnapTable v${{ github.ref_name }}"
+          files: dist/SnapTable.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
