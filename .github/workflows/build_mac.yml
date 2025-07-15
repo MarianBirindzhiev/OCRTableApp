@@ -27,18 +27,13 @@ jobs:
 
       - name: 🏗️ Build executable with PyInstaller
         run: |
-          pyinstaller \
-            --name SnapTable \
-            --windowed \
-            --icon=assets/logo.icns \
-            --osx-bundle-identifier=net.vectorworks.snaptable \
-            main.py
+          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.icns main.py
           ls dist
 
       - name: 📦 Zip .app bundle properly using ditto
         run: |
           cd dist
-          ditto -c -k --sequesterRsrc --keepParent SnapTable.app SnapTable.app.zip
+          zip -r SnapTable.app.zip SnapTable.app
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
