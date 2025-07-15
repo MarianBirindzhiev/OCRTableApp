@@ -27,19 +27,8 @@ jobs:
 
       - name: 🏗️ Build executable with PyInstaller
         run: |
-          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns main.py
+          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.icns main.py
           ls dist
-
-      - name: 🛠️ Force Light Mode in macOS Info.plist
-        run: |
-          PLIST_PATH="dist/SnapTable.app/Contents/Info.plist"
-          if [ -f "$PLIST_PATH" ]; then
-            /usr/libexec/PlistBuddy -c "Add :NSRequiresAquaSystemAppearance bool true" "$PLIST_PATH" || \
-            /usr/libexec/PlistBuddy -c "Set :NSRequiresAquaSystemAppearance true" "$PLIST_PATH"
-          else
-            echo "Info.plist not found at $PLIST_PATH"
-            exit 1
-          fi
 
       - name: 📦 Zip .app bundle properly using ditto
         run: |
