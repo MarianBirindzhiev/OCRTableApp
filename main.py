@@ -4,6 +4,9 @@ from utilities import setup_logger, parse_args, ROWS_DEFAULT, COLS_DEFAULT
 
 import tkinter as tk
 import argparse
+import os
+
+os.environ['TK_FORCE_LIGHT_MODE'] = '1'  # Force light mode for Tkinter
 
 logger = setup_logger()
 
