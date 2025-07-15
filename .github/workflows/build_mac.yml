@@ -30,6 +30,13 @@ jobs:
           pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.icns main.py
           ls dist
 
+      - name: 🛠️ Force Light Mode in macOS Info.plist
+        run: |
+          PLIST_PATH="dist/SnapTable.app/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c "Add :NSRequiresAquaSystemAppearance bool true" "$PLIST_PATH" || \
+          /usr/libexec/PlistBuddy -c "Set :NSRequiresAquaSystemAppearance true" "$PLIST_PATH"
+
+
       - name: 📦 Zip .app bundle properly using ditto
         run: |
           cd dist
