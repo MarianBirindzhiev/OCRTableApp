@@ -35,32 +35,6 @@ jobs:
             main.py
           ls dist
 
-      - name: 🧼 Remove quarantine attribute (optional)
-        run: |
-          xattr -rd com.apple.quarantine dist/SnapTable.app || true
-
-      - name: 🧩 Inject custom Info.plist to force Light Mode
-        run: |
-          cat <<EOF > dist/SnapTable.app/Contents/Info.plist
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>CFBundleName</key>
-              <string>SnapTable</string>
-              <key>CFBundleIdentifier</key>
-              <string>net.vectorworks.snaptable</string>
-              <key>CFBundleVersion</key>
-              <string>1.0</string>
-              <key>CFBundlePackageType</key>
-              <string>APPL</string>
-              <key>NSRequiresAquaSystemAppearance</key>
-              <true/>
-          </dict>
-          </plist>
-          EOF
-          plutil -lint dist/SnapTable.app/Contents/Info.plist
-
       - name: 📦 Zip .app bundle properly using ditto
         run: |
           cd dist
