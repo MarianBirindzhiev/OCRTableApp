@@ -1,4 +1,4 @@
-from .handler_helper import generate_screenshot_filename, get_virtual_screen_bbox
+from .handler_helper import generate_screenshot_filename, get_virtual_screen_bbox, capture_region
 from utilities import LOGGER_NAME
 
 from tkinter import Tk, Toplevel, Canvas, Label, BOTH
@@ -108,9 +108,8 @@ class SnipTool(Toplevel):
         # Capture and save the screenshot
         if x2 > x1 and y2 > y1:
             try:
-                img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
                 file_path = generate_screenshot_filename()
-                img.save(file_path)
+                capture_region(x1, y1, x2, y2, file_path)
                 logger.info(f"Screenshot saved to {file_path}")
                 self.on_snip_done_callback(file_path)
             except Exception as e:
