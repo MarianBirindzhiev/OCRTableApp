@@ -2,7 +2,7 @@ from .handler_helper import generate_screenshot_filename, get_virtual_screen_bbo
 from utilities import LOGGER_NAME
 
 from tkinter import Tk, Toplevel, Canvas, Label, BOTH
-from PIL import Image
+from PIL import Image, ImageGrab
 import logging
 import sys
 import mss
@@ -108,14 +108,11 @@ class SnipTool(Toplevel):
         # Capture and save the screenshot
         if x2 > x1 and y2 > y1:
             try:
-                with mss.mss() as sct:
-                    monitor = {"left": x1, "top": y1, "width": x2 - x1, "height": y2 - y1}
-                    sct_img = sct.grab(monitor)
-                    img = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
-                    file_path = generate_screenshot_filename()
-                    img.save(file_path)
-                    logger.info(f"Screenshot saved to {file_path}")
-                    self.on_snip_done_callback(file_path)
+                img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
+                file_path = generate_screenshot_filename()
+                img.save(file_path)
+                logger.info(f"Screenshot saved to {file_path}")
+                self.on_snip_done_callback(file_path)
             except Exception as e:
                 logger.error(f"Failed to capture screenshot: {e}")
         else:

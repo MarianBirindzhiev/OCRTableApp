@@ -1,7 +1,8 @@
 from datetime import datetime
 import tempfile
 import os
-import mss
+import subprocess
+from PIL import ImageGrab
 
 def generate_screenshot_filename():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -11,6 +12,11 @@ def generate_screenshot_filename():
     return file_path
 
 def get_virtual_screen_bbox():
-    with mss.mss() as sct:
-        monitor = sct.monitors[0]
-        return monitor['left'], monitor['top'], monitor['width'], monitor['height']
+    """
+    Get virtual screen bounding box using multiple fallback methods
+    for macOS Sequoia compatibility.
+    """
+    # Method 1: Try PIL ImageGrab to get screen dimensions
+    screen = ImageGrab.grab()
+    width, height = screen.size
+    return 0, 0, width, height
