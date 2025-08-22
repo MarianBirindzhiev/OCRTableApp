@@ -19,7 +19,7 @@ def get_image_from_clipboard():
     system = platform.system()
     
     if system == "Darwin":  # macOS
-        return _get_clipboard_image_macos()
+        return _get_clipboard_image_windows()
     else:  # Windows and Linux
         return _get_clipboard_image_windows()
 
