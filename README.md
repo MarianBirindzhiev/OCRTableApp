@@ -134,6 +134,8 @@ The application follows a modular architecture with clear separation of concerns
 - **Command System**: Implements undo/redo functionality with command pattern
 - **Utilities**: Shared functionality including logging, export, and configuration
 
+## Distribution
+
 The project includes GitHub Actions workflows for automated building:
 
 - **Windows**: Generates `.exe` executable
