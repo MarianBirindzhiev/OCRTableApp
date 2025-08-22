@@ -4,3 +4,4 @@ from .cell_edit_handler import CellEditHandler
 from .word_inserter_handler import WordInserterHandler
 from .resize_handler import ResizeHandler
 from .screenshot_ocr_handler import ScreenshotOCRHandler
+from .clipboard_ocr_handler import ClipboardOCRHandler

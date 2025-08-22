@@ -5,7 +5,8 @@ from .handlers import (
         HistoryHandler, 
         CellEditHandler, 
         NavigationHandler,
-        ScreenshotOCRHandler
+        ScreenshotOCRHandler,
+        ClipboardOCRHandler
 )
 
 import logging
@@ -22,6 +23,7 @@ class TableInteractionCoordinator:
         self.cell_editor_handler = CellEditHandler(controller)
         self.nav_handler = NavigationHandler(controller)
         self.screenshot_ocr_handler = ScreenshotOCRHandler(controller)
+        self.clipboard_ocr_handler = ClipboardOCRHandler(controller)
 
 
  

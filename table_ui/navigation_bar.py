@@ -43,7 +43,8 @@ class NavigationBar:
             ("Undo", controller.navigation_items["undo"]),
             ("Redo", controller.navigation_items["redo"]),
             ("Export", controller.navigation_items["export"]),
-            ("Screenshot & OCR", controller.navigation_items["screenshot_ocr"])
+            ("Screenshot & OCR", controller.navigation_items["screenshot_ocr"]),
+            ("Clipboard OCR", controller.navigation_items["clipboard_ocr"])
         ]:
             logger.debug(f"Creating action button: {text}")            
             tk.Button(

@@ -23,7 +23,6 @@ def setup_logger():
     if not logger.hasHandlers():
         # === File handler (UTF-8 safe) ===
         file_handler = logging.FileHandler(LOGGING_PATH, encoding='utf-8')
-        '''
         # === Console handler (safe for cp1251 terminals) ===
         class SafeStreamHandler(logging.StreamHandler):
             def emit(self, record):
@@ -39,14 +38,13 @@ def setup_logger():
 
         console_handler = SafeStreamHandler(stream=sys.stdout)
 
-        '''
         # Format for all outputs
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         file_handler.setFormatter(formatter)
-        #console_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
 
         # Add both handlers
         logger.addHandler(file_handler)
-        #logger.addHandler(console_handler)
+        logger.addHandler(console_handler)
 
     return logger

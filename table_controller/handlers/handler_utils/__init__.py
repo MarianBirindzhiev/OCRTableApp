@@ -1,2 +1,1 @@
 from .take_screenshot import ScreenshotTaker
-from .handler_helper import generate_screenshot_filename
