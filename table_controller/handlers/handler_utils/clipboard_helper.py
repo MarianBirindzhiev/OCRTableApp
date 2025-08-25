@@ -5,6 +5,7 @@ import logging
 import sys
 import io
 import subprocess
+import os
 
 # macOS-only imports
 if sys.platform == "darwin":
@@ -38,10 +39,10 @@ def _get_clipboard_image_macos():
         file_path = generate_unique_filename()
         result = subprocess.run(
             ["pngpaste", file_path], 
-            capture_output=True, 
+            check=False, 
             timeout=5
         )
-        if result.returncode == 0:
+        if result.returncode == 0 and os.path.exists(file_path):
             logger.info(f"Clipboard image saved via pngpaste: {file_path}")
             return file_path
         else:
@@ -49,6 +50,9 @@ def _get_clipboard_image_macos():
             return None
     except FileNotFoundError:
         logger.error("pngpaste not installed. Install with: brew install pngpaste")
+        return None
+    except subprocess.TimeoutExpired:
+        logger.error("pngpaste timed out while reading clipboard image")
         return None
     except Exception as e:
         logger.error(f"pngpaste error: {e}")

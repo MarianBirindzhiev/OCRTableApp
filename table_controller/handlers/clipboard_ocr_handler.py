@@ -30,18 +30,21 @@ class ClipboardOCRHandler:
                     "No image found in clipboard. Please copy an image first."
                 )
                 logger.warning("No image found in clipboard")
-                return
+                return False
             
             self.path = path
+            return True
         except Exception as e:
             logger.exception(f"Failed to get image from clipboard: {e}")
             messagebox.showerror("Error", f"Failed to get image from clipboard: {e}")
-            return
+            return False
 
 
     def run_ocr_from_clipboard(self):
         """Handle clipboard OCR operation."""
-        self._setup()
+        if not self._setup():
+            return # stop if setup failed
+        
         logger.info("Starting clipboard OCR process...")
         
         args = SimpleNamespace(

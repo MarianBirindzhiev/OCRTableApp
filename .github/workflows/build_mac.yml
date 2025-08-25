@@ -35,7 +35,7 @@ jobs:
 
       - name: 🏗️ Build executable with PyInstaller
         run: |
-          pyinstaller --name SnapTable --icon=assets/logo.icns main.py
+          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns main.py
           ls dist
 
       - name: ✍️ Modify Info.plist for needed permissions
