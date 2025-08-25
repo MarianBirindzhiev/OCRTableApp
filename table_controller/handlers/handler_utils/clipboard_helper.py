@@ -41,8 +41,12 @@ def _get_clipboard_image_macos():
             data = pb.dataForType_(NSPasteboardTypeTIFF) # TIFF
 
         if data:
-            img_bytes = bytes(data)
-            img = Image.open(io.BytesIO(img_bytes))
+            try:
+                img_bytes = bytes(data)
+                img = Image.open(io.BytesIO(img_bytes))
+            except Exception as e:
+                logger.error(f"Failed to open image from clipboard data: {e}")
+                return None
 
             file_path = generate_unique_filename()
             img.save(file_path, "PNG")
