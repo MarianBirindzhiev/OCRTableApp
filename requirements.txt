@@ -3,8 +3,8 @@ easyocr
 matplotlib
 numpy
 Pillow
-mss  
+mss
 
-# macOS only
-pyobjc-framework-AppKit; sys_platform == "darwin"
-pyobjc-framework-Foundation; sys_platform == "darwin"
+#macos only
+#pyobjc-framework-AppKit; sys_platform == "darwin"
+#pyobjc-framework-Foundation; sys_platform == "darwin"
