@@ -19,14 +19,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 🛠 Install macOS clipboard dependency
-        run: |
-          if ! command -v pngpaste &> /dev/null; then
-            brew install pngpaste
-          else
-            echo "pngpaste already installed"
-          fi
-
       - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
