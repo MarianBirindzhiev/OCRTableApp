@@ -42,8 +42,9 @@ def _get_clipboard_image_macos():
 
         if data:
             try:
-                img_bytes = bytes(data)
+                img_bytes = data.bytes()
                 img = Image.open(io.BytesIO(img_bytes))
+                img = img.convert("RGBA")
             except Exception as e:
                 logger.error(f"Failed to open image from clipboard data: {e}")
                 return None
