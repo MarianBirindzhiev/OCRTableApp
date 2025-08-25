@@ -39,7 +39,7 @@ def _get_clipboard_image_macos():
         result = subprocess.run(
             ["pngpaste", file_path], 
             capture_output=True, 
-            timeout=10
+            timeout=5
         )
         if result.returncode == 0:
             logger.info(f"Clipboard image saved via pngpaste: {file_path}")
