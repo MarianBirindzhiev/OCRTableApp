@@ -4,6 +4,7 @@ import platform
 import logging
 import sys
 import io
+import subprocess
 
 # macOS-only imports
 if sys.platform == "darwin":
@@ -34,30 +35,23 @@ def get_image_from_clipboard():
 def _get_clipboard_image_macos():
     """Save the last image from clipboard to temp folder."""
     try:
-        pb = NSPasteboard.generalPasteboard()
-        data = pb.dataForType_(NSPasteboardTypePNG) # PNG
-
-        if data is None:
-            data = pb.dataForType_(NSPasteboardTypeTIFF) # TIFF
-
-        if data:
-            try:
-                img_bytes = data.bytes()
-                img = Image.open(io.BytesIO(img_bytes))
-                img = img.convert("RGBA")
-            except Exception as e:
-                logger.error(f"Failed to open image from clipboard data: {e}")
-                return None
-
-            file_path = generate_unique_filename()
-            img.save(file_path, "PNG")
-            logger.info(f"Saved clipboard image to: {file_path}")
+        file_path = generate_unique_filename()
+        result = subprocess.run(
+            ["pngpaste", file_path], 
+            capture_output=True, 
+            timeout=10
+        )
+        if result.returncode == 0:
+            logger.info(f"Clipboard image saved via pngpaste: {file_path}")
             return file_path
         else:
-            logger.warning("No image found in clipboard")
+            logger.warning("No image in clipboard or pngpaste failed")
             return None
+    except FileNotFoundError:
+        logger.error("pngpaste not installed. Install with: brew install pngpaste")
+        return None
     except Exception as e:
-        logger.error(f"Failed to get clipboard image on macOS: {e}")
+        logger.error(f"pngpaste error: {e}")
         return None
 
 def _get_clipboard_image_windows():
