@@ -20,3 +20,7 @@ logs/
 build/
 dist/
 *.spec
+
+# EasyOCR models:
+models/
+*.pth

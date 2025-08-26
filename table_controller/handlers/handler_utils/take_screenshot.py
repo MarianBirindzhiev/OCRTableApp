@@ -1,8 +1,8 @@
-from .handler_helper import generate_screenshot_filename, get_virtual_screen_bbox
-from utilities import LOGGER_NAME
+from .screenshot_helper import get_virtual_screen_bbox
+from utilities import LOGGER_NAME, generate_unique_filename
 
 from tkinter import Tk, Toplevel, Canvas, Label, BOTH
-from PIL import Image
+from PIL import Image, ImageGrab
 import logging
 import sys
 import mss
@@ -112,7 +112,7 @@ class SnipTool(Toplevel):
                     monitor = {"left": x1, "top": y1, "width": x2 - x1, "height": y2 - y1}
                     sct_img = sct.grab(monitor)
                     img = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
-                    file_path = generate_screenshot_filename()
+                    file_path = generate_unique_filename()
                     img.save(file_path)
                     logger.info(f"Screenshot saved to {file_path}")
                     self.on_snip_done_callback(file_path)

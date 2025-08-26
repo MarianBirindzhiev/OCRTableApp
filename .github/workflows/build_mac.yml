@@ -25,10 +25,100 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
+      - name: 📥 Pre-download and prepare EasyOCR models properly
+        run: |
+          python - <<'EOF'
+          import easyocr
+          import os
+          import shutil
+          import zipfile
+          
+          print("=== Downloading EasyOCR models ===")
+          # Initialize EasyOCR to download models
+          reader = easyocr.Reader(['en'], download_enabled=True)
+          print("✅ EasyOCR models downloaded")
+          
+          # Find the actual model directory
+          easyocr_home = os.path.expanduser("~/.EasyOCR")
+          print(f"EasyOCR home: {easyocr_home}")
+          
+          # Create bundle models directory
+          bundle_models_dir = 'models'
+          os.makedirs(bundle_models_dir, exist_ok=True)
+          
+          # Extract and copy model files properly
+          model_dir = os.path.join(easyocr_home, 'model')
+          if os.path.exists(model_dir):
+              print(f"Found model directory: {model_dir}")
+              
+              # List all files in model directory
+              for item in os.listdir(model_dir):
+                  item_path = os.path.join(model_dir, item)
+                  print(f"Found: {item}")
+                  
+                  if item.endswith('.zip'):
+                      # Extract zip files to get .pth files
+                      print(f"Extracting {item}")
+                      with zipfile.ZipFile(item_path, 'r') as zip_ref:
+                          zip_ref.extractall(bundle_models_dir)
+                  elif item.endswith('.pth'):
+                      # Copy .pth files directly
+                      shutil.copy2(item_path, bundle_models_dir)
+                      print(f"Copied {item}")
+          
+          # Copy any additional model structure
+          for root, dirs, files in os.walk(easyocr_home):
+              for file in files:
+                  if file.endswith('.pth'):
+                      src_path = os.path.join(root, file)
+                      rel_path = os.path.relpath(src_path, easyocr_home)
+                      dest_path = os.path.join(bundle_models_dir, rel_path)
+                      os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                      shutil.copy2(src_path, dest_path)
+                      print(f"Copied model file: {rel_path}")
+          
+          print("=== Final model bundle contents ===")
+          for root, dirs, files in os.walk(bundle_models_dir):
+              for file in files:
+                  print(f"Bundle contains: {os.path.join(root, file)}")
+          EOF
+
+      - name: 🔍 Verify model files before bundling
+        run: |
+          echo "=== Checking for required EasyOCR model files ==="
+          ls -la models/
+          find models -name "*.pth" -exec ls -la {} \;
+          
+          # Check for specific required files
+          if [ -f "models/craft_mlt_25k.pth" ]; then
+              echo "✅ Detection model found"
+          else
+              echo "❌ Detection model missing"
+              exit 1
+          fi
+          
+          if [ -f "models/english_g2.pth" ]; then
+              echo "✅ English recognition model found"
+          else
+              echo "❌ English recognition model missing"
+              exit 1
+          fi
+
       - name: 🏗️ Build executable with PyInstaller
         run: |
-          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.icns main.py
+          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns \
+            --add-data "models:models" \
+            --collect-all easyocr \
+            main.py
           ls dist
+
+      - name: ✍️ Modify Info.plist for needed permissions
+        run: |
+          /usr/libexec/PlistBuddy -c "Add :NSScreenCaptureUsageDescription string 'SnapTable needs screen capture access for OCR features.'" dist/SnapTable.app/Contents/Info.plist
+
+      - name: ✍️ Force Light Theme in Info.plist
+        run: |
+          /usr/libexec/PlistBuddy -c "Add :NSRequiresAquaSystemAppearance bool true" dist/SnapTable.app/Contents/Info.plist
 
       - name: 📦 Zip .app bundle properly using ditto
         run: |

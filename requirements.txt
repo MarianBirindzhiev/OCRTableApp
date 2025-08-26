@@ -3,4 +3,5 @@ easyocr
 matplotlib
 numpy
 Pillow
-mss  
+mss
+certifi

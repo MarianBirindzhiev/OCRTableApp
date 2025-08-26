@@ -41,7 +41,8 @@ class TableGridController:
             "undo": self.undo,
             "redo": self.redo,
             "export": self.export,
-            "screenshot_ocr": self.take_screenshot_and_ocr
+            "screenshot_ocr": self.take_screenshot_and_ocr,
+            "clipboard_ocr": self.handle_clipboard_ocr
         }
 
         self.root = window_manager.root
@@ -86,3 +87,6 @@ class TableGridController:
     
     def take_screenshot_and_ocr(self):
         self.handler.screenshot_ocr_handler.start_ocr_processing()
+
+    def handle_clipboard_ocr(self):
+        self.handler.clipboard_ocr_handler.run_ocr_from_clipboard()

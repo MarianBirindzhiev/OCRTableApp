@@ -1,6 +1,8 @@
 import argparse
 import os
 import sys
+from datetime import datetime 
+import tempfile
 
 def resource_path(relative_path):
     try:
@@ -17,3 +19,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output_csv", default="selected_words.csv", help="CSV output file")
     parser.add_argument("--lang", default="en", help="OCR language (default: en)")
     return parser.parse_args()
+
+def generate_unique_filename():
+    """Generate a unique filename for clipboard image."""
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"clipboard_{timestamp}.png"
+    temp_dir = tempfile.gettempdir()
+    file_path = os.path.join(temp_dir, filename)
+    return file_path
