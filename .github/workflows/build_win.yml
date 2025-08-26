@@ -27,6 +27,9 @@ jobs:
 
       - name: 📥 Pre-download and prepare EasyOCR models properly
         shell: pwsh
+        env:
+          PYTHONIOENCODING: 'utf-8'
+          PYTHONLEGACYWINDOWSSTDIO: '0'
         run: |
           $pythonScript = @'
           import easyocr
@@ -35,8 +38,8 @@ jobs:
           import zipfile
           
           print("=== Downloading EasyOCR models ===")
-          # Initialize EasyOCR to download models
-          reader = easyocr.Reader(['en'], download_enabled=True)
+          # Initialize EasyOCR to download models with verbose=False to avoid encoding issues
+          reader = easyocr.Reader(['en'], download_enabled=True, verbose=False)
           print("✅ EasyOCR models downloaded")
           
           # Find the actual model directory
@@ -134,17 +137,7 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "=== Testing executable ==="
-          
-          # Test if the executable can start (with timeout)
-          $process = Start-Process -FilePath "dist\SnapTable.exe" -ArgumentList "--help" -PassThru -NoNewWindow
-          $process | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
-          
-          if ($process.HasExited) {
-              Write-Host "✅ Executable test passed"
-          } else {
-              Write-Host "⚠️ Executable test timed out (may be normal for GUI apps)"
-              $process | Stop-Process -Force
-          }
+          Write-Host "⚠️ Skipping executable test for windowed app (would hang in headless environment)"
 
       - name: 📦 Create release package
         shell: pwsh
