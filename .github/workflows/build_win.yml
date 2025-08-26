@@ -120,31 +120,6 @@ jobs:
             --collect-all easyocr `
             main.py
 
-      - name: 🔍 Verify final executable bundle structure
-        shell: pwsh
-        run: |
-          Write-Host "=== Executable bundle structure verification ==="
-          
-          if (-not (Test-Path "dist\SnapTable.exe")) {
-              Write-Host "❌ Executable not found"
-              exit 1
-          }
-          
-          Write-Host "✅ Executable created"
-          Get-Item "dist\SnapTable.exe" | Format-List
-
-      - name: 🧪 Test executable functionality
-        shell: pwsh
-        run: |
-          Write-Host "=== Testing executable ==="
-          Write-Host "⚠️ Skipping executable test for windowed app (would hang in headless environment)"
-
-      - name: 📦 Create release package
-        shell: pwsh
-        run: |
-          # Create a zip package for easier distribution
-          Compress-Archive -Path "dist\SnapTable.exe" -DestinationPath "dist\SnapTable-Windows.zip"
-
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
