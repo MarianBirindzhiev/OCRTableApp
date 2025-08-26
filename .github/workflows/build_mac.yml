@@ -19,23 +19,27 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 🔧 Configure SSL Certificate Environment
-        run: |
-          echo "SSL_CERT_FILE=$(python -m certifi)" >> $GITHUB_ENV
-          echo "REQUESTS_CA_BUNDLE=$(python -m certifi)" >> $GITHUB_ENV
-
       - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: 🏗️ Build executable with PyInstaller
-        env:
-          SSL_CERT_FILE: $(python -m certifi)
-          REQUESTS_CA_BUNDLE: $(python -m certifi)
+      - name: 📥 Pre-download EasyOCR models
         run: |
-          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns main.py
+          python - <<'EOF'
+          import easyocr
+          reader = easyocr.Reader(['en'], download_enabled=True)
+          print("✅ EasyOCR models downloaded")
+          EOF
+          mkdir -p models
+          cp -r ~/.EasyOCR/* models/ || true
+
+      - name: 🏗️ Build executable with PyInstaller
+        run: |
+          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns \
+            --add-data "models:models" \
+            main.py
           ls dist
 
       - name: ✍️ Modify Info.plist for needed permissions

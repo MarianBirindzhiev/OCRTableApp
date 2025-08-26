@@ -1,7 +1,8 @@
-from utilities import LOGGER_NAME
+from utilities import LOGGER_NAME, resource_path
 
 import easyocr
 import logging
+import sys
 
 logger = logging.getLogger(LOGGER_NAME)
 
@@ -20,9 +21,22 @@ class OCRReader:
 
         logger.info(f"Initializing OCRReader (lang='{language}', gpu={gpu})")
 
+        model_dir = resource_path("models")  # Path to the directory containing OCR models
+
+        # Decide whether downloads are allowed
+        running_bundled = hasattr(sys, "_MEIPASS")
+        download_enabled = not running_bundled  # allow auto-download in console, disable in bundle
+
+
         # Create an EasyOCR reader instance
         try:
-            self.reader = easyocr.Reader([self.language], gpu=self.gpu)
+            self.reader = easyocr.Reader(
+                [self.language], 
+                gpu=self.gpu,
+                model_storage_directory=model_dir,
+                user_network_directory=model_dir,
+                download_enabled=download_enabled
+                )
             logger.info("EasyOCR reader initialized successfully.")
         except Exception as e:
             logger.exception("Failed to initialize EasyOCR reader.")

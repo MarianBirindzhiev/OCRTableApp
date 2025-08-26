@@ -25,9 +25,21 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
+      - name: 📥 Pre-download EasyOCR models
+        run: |
+          python - <<'EOF'
+          import easyocr
+          reader = easyocr.Reader(['en'], download_enabled=True)
+          print("✅ EasyOCR models downloaded")
+          EOF
+          mkdir models
+          xcopy /E /I /Y "%USERPROFILE%\\.EasyOCR" models
+
       - name: 🏗️ Build executable with PyInstaller
         run: |
-          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.ico main.py
+          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.ico ^
+            --add-data "models;models" ^
+            main.py
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
