@@ -36,15 +36,15 @@ def setup_logger():
                     record.msg = str(record.msg).encode('ascii', 'replace').decode()
                     super().emit(record)
 
-        console_handler = SafeStreamHandler(stream=sys.stdout)
-
-        # Format for all outputs
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-        file_handler.setFormatter(formatter)
-        console_handler.setFormatter(formatter)
 
-        # Add both handlers
+        file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
+
+        # === Console handler (only when NOT in PyInstaller windowed mode) ===
+        if not hasattr(sys, '_MEIPASS') or sys.stdout is not None:
+            console_handler = SafeStreamHandler(stream=sys.stdout)
+            console_handler.setFormatter(formatter)
+            logger.addHandler(console_handler)
 
     return logger
