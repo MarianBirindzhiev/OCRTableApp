@@ -104,7 +104,6 @@ python main.py document.jpg --scale_percent 200 --lang en
 - **Ctrl+Z**: Undo last action
 - **Ctrl+Y**: Redo last undone action
 - **Tab**: Smart navigation based on current mode
-- **Ctrl+Shift+S**: Take screenshot and start OCR
 - **Arrow Keys**: Navigate between table cells
 
 ## Project Structure
