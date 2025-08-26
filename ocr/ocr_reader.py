@@ -20,46 +20,6 @@ class OCRReader:
         # Get model directory path
         model_dir = resource_path("models")
         
-        # Enhanced debugging - log the complete environment
-        logger.info(f"Python executable: {sys.executable}")
-        logger.info(f"Running bundled: {hasattr(sys, '_MEIPASS')}")
-        if hasattr(sys, '_MEIPASS'):
-            logger.info(f"Bundle temp dir (_MEIPASS): {sys._MEIPASS}")
-        
-        logger.info(f"Model directory path: {model_dir}")
-        logger.info(f"Model directory exists: {os.path.exists(model_dir)}")
-        
-        # List ALL files in model directory for debugging
-        if os.path.exists(model_dir):
-            logger.info("=== Model directory contents ===")
-            for root, dirs, files in os.walk(model_dir):
-                level = root.replace(model_dir, '').count(os.sep)
-                indent = ' ' * 2 * level
-                logger.info(f"{indent}{os.path.basename(root)}/")
-                subindent = ' ' * 2 * (level + 1)
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    file_size = os.path.getsize(file_path)
-                    logger.info(f"{subindent}{file} ({file_size} bytes)")
-        else:
-            logger.error(f"Model directory does not exist: {model_dir}")
-
-        # Check for required model files
-        required_files = ['craft_mlt_25k.pth', 'english_g2.pth']
-        missing_files = []
-        
-        for required_file in required_files:
-            file_path = os.path.join(model_dir, required_file)
-            if os.path.exists(file_path):
-                file_size = os.path.getsize(file_path)
-                logger.info(f"✅ Found {required_file} ({file_size} bytes)")
-            else:
-                logger.error(f"❌ Missing {required_file}")
-                missing_files.append(required_file)
-        
-        if missing_files:
-            logger.error(f"Missing required model files: {missing_files}")
-
         # Determine download settings
         running_bundled = hasattr(sys, "_MEIPASS")
         download_enabled = not running_bundled

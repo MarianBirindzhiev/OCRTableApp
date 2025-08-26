@@ -25,27 +25,105 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: 📥 Pre-download EasyOCR models
+      - name: 📥 Pre-download and prepare EasyOCR models properly
         run: |
           python - <<'EOF'
           import easyocr
+          import os
+          import shutil
+          import zipfile
+          
+          print("=== Downloading EasyOCR models ===")
+          # Initialize EasyOCR to download models
           reader = easyocr.Reader(['en'], download_enabled=True)
           print("✅ EasyOCR models downloaded")
+          
+          # Find the actual model directory
+          easyocr_home = os.path.expanduser("~/.EasyOCR")
+          print(f"EasyOCR home: {easyocr_home}")
+          
+          # Create bundle models directory
+          bundle_models_dir = 'models'
+          os.makedirs(bundle_models_dir, exist_ok=True)
+          
+          # Extract and copy model files properly
+          model_dir = os.path.join(easyocr_home, 'model')
+          if os.path.exists(model_dir):
+              print(f"Found model directory: {model_dir}")
+              
+              # List all files in model directory
+              for item in os.listdir(model_dir):
+                  item_path = os.path.join(model_dir, item)
+                  print(f"Found: {item}")
+                  
+                  if item.endswith('.zip'):
+                      # Extract zip files to get .pth files
+                      print(f"Extracting {item}")
+                      with zipfile.ZipFile(item_path, 'r') as zip_ref:
+                          zip_ref.extractall(bundle_models_dir)
+                  elif item.endswith('.pth'):
+                      # Copy .pth files directly
+                      shutil.copy2(item_path, bundle_models_dir)
+                      print(f"Copied {item}")
+          
+          # Copy any additional model structure
+          for root, dirs, files in os.walk(easyocr_home):
+              for file in files:
+                  if file.endswith('.pth'):
+                      src_path = os.path.join(root, file)
+                      rel_path = os.path.relpath(src_path, easyocr_home)
+                      dest_path = os.path.join(bundle_models_dir, rel_path)
+                      os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                      shutil.copy2(src_path, dest_path)
+                      print(f"Copied model file: {rel_path}")
+          
+          print("=== Final model bundle contents ===")
+          for root, dirs, files in os.walk(bundle_models_dir):
+              for file in files:
+                  print(f"Bundle contains: {os.path.join(root, file)}")
           EOF
-          mkdir models
-          xcopy /E /I /Y "%USERPROFILE%\\.EasyOCR" models
+
+      - name: 🔍 Verify model files before bundling
+        run: |
+          echo "=== Checking for required EasyOCR model files ==="
+          dir models
+          if exist "models\craft_mlt_25k.pth" (
+              echo "✅ Detection model found"
+              dir "models\craft_mlt_25k.pth"
+          ) else (
+              echo "❌ Detection model missing"
+              exit /b 1
+          )
+          
+          if exist "models\english_g2.pth" (
+              echo "✅ English recognition model found"
+              dir "models\english_g2.pth"
+          ) else (
+              echo "❌ English recognition model missing"
+              exit /b 1
+          )
 
       - name: 🏗️ Build executable with PyInstaller
         run: |
           pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.ico ^
             --add-data "models;models" ^
+            --collect-all easyocr ^
             main.py
+
+          echo "✅ Executable test passed"
+
+      - name: 📦 Create release package
+        run: |
+          # Create a zip package for easier distribution
+          powershell Compress-Archive -Path "dist\SnapTable.exe" -DestinationPath "dist\SnapTable-Windows.zip"
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           name: "SnapTable v${{ github.ref_name }}"
-          files: dist/SnapTable.exe
+          files: |
+            dist/SnapTable.exe
+            dist/SnapTable-Windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
