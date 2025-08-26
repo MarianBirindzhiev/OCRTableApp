@@ -8,7 +8,17 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - os: macos-13
+            artifact-name: "SnapTable-macOS-x64"
+            arch: "x64"
+          - os: macos-latest
+            artifact-name: "SnapTable-macOS-arm64" 
+            arch: "arm64"
+    
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: 🧾 Checkout repository
@@ -85,7 +95,7 @@ jobs:
 
       - name: 🔍 Verify model files before bundling
         run: |
-          echo "=== Checking for required EasyOCR model files ==="
+          echo "=== Checking for required EasyOCR model files (${{ matrix.arch }}) ==="
           ls -la models/
           find models -name "*.pth" -exec ls -la {} \;
           
@@ -104,7 +114,7 @@ jobs:
               exit 1
           fi
 
-      - name: 🏗️ Build executable with PyInstaller
+      - name: 🏗️ Build executable with PyInstaller (${{ matrix.arch }})
         run: |
           pyinstaller --name SnapTable --windowed --icon=assets/logo.icns \
             --add-data "models:models" \
@@ -120,16 +130,32 @@ jobs:
         run: |
           /usr/libexec/PlistBuddy -c "Add :NSRequiresAquaSystemAppearance bool true" dist/SnapTable.app/Contents/Info.plist
 
-      - name: 📦 Zip .app bundle properly using ditto
+      - name: 📦 Create architecture-specific release package
         run: |
           cd dist
-          zip -r SnapTable.app.zip SnapTable.app
+          zip -r ${{ matrix.artifact-name }}.zip SnapTable.app
+
+      - name: 🔍 Verify final app bundle structure (${{ matrix.arch }})
+        run: |
+          echo "=== App bundle structure verification (${{ matrix.arch }}) ==="
+          
+          if [ ! -d "dist/SnapTable.app" ]; then
+              echo "❌ App bundle not found"
+              exit 1
+          fi
+          
+          echo "✅ App bundle created for ${{ matrix.arch }}"
+          ls -la dist/
+          
+          # Check bundle size
+          du -sh dist/SnapTable.app
+          du -sh dist/${{ matrix.artifact-name }}.zip
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           name: "SnapTable v${{ github.ref_name }}"
-          files: dist/SnapTable.app.zip
+          files: dist/${{ matrix.artifact-name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
