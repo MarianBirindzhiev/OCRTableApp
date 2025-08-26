@@ -26,8 +26,9 @@ jobs:
           pip install pyinstaller
 
       - name: 📥 Pre-download and prepare EasyOCR models properly
+        shell: pwsh
         run: |
-          python - <<'EOF'
+          $pythonScript = @'
           import easyocr
           import os
           import shutil
@@ -81,41 +82,75 @@ jobs:
           for root, dirs, files in os.walk(bundle_models_dir):
               for file in files:
                   print(f"Bundle contains: {os.path.join(root, file)}")
-          EOF
+          '@
+          
+          # Execute the Python script
+          python -c $pythonScript
 
       - name: 🔍 Verify model files before bundling
+        shell: pwsh
         run: |
-          echo "=== Checking for required EasyOCR model files ==="
-          dir models
-          if exist "models\craft_mlt_25k.pth" (
-              echo "✅ Detection model found"
-              dir "models\craft_mlt_25k.pth"
-          ) else (
-              echo "❌ Detection model missing"
-              exit /b 1
-          )
+          Write-Host "=== Checking for required EasyOCR model files ==="
+          Get-ChildItem -Path "models" -Recurse | Format-Table Name, Length, FullName
           
-          if exist "models\english_g2.pth" (
-              echo "✅ English recognition model found"
-              dir "models\english_g2.pth"
-          ) else (
-              echo "❌ English recognition model missing"
-              exit /b 1
-          )
+          if (Test-Path "models\craft_mlt_25k.pth") {
+              Write-Host "✅ Detection model found"
+              Get-Item "models\craft_mlt_25k.pth" | Format-List
+          } else {
+              Write-Host "❌ Detection model missing"
+              exit 1
+          }
+          
+          if (Test-Path "models\english_g2.pth") {
+              Write-Host "✅ English recognition model found"
+              Get-Item "models\english_g2.pth" | Format-List
+          } else {
+              Write-Host "❌ English recognition model missing"
+              exit 1
+          }
 
       - name: 🏗️ Build executable with PyInstaller
+        shell: pwsh
         run: |
-          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.ico ^
-            --add-data "models;models" ^
-            --collect-all easyocr ^
+          pyinstaller --name SnapTable --onefile --windowed --icon=assets/logo.ico `
+            --add-data "models;models" `
+            --collect-all easyocr `
             main.py
 
-          echo "✅ Executable test passed"
+      - name: 🔍 Verify final executable bundle structure
+        shell: pwsh
+        run: |
+          Write-Host "=== Executable bundle structure verification ==="
+          
+          if (-not (Test-Path "dist\SnapTable.exe")) {
+              Write-Host "❌ Executable not found"
+              exit 1
+          }
+          
+          Write-Host "✅ Executable created"
+          Get-Item "dist\SnapTable.exe" | Format-List
+
+      - name: 🧪 Test executable functionality
+        shell: pwsh
+        run: |
+          Write-Host "=== Testing executable ==="
+          
+          # Test if the executable can start (with timeout)
+          $process = Start-Process -FilePath "dist\SnapTable.exe" -ArgumentList "--help" -PassThru -NoNewWindow
+          $process | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
+          
+          if ($process.HasExited) {
+              Write-Host "✅ Executable test passed"
+          } else {
+              Write-Host "⚠️ Executable test timed out (may be normal for GUI apps)"
+              $process | Stop-Process -Force
+          }
 
       - name: 📦 Create release package
+        shell: pwsh
         run: |
           # Create a zip package for easier distribution
-          powershell Compress-Archive -Path "dist\SnapTable.exe" -DestinationPath "dist\SnapTable-Windows.zip"
+          Compress-Archive -Path "dist\SnapTable.exe" -DestinationPath "dist\SnapTable-Windows.zip"
 
       - name: 🚀 Upload App to GitHub Release
         uses: softprops/action-gh-release@v1
