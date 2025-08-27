@@ -5,3 +5,6 @@ from .word_inserter_handler import WordInserterHandler
 from .resize_handler import ResizeHandler
 from .screenshot_ocr_handler import ScreenshotOCRHandler
 from .clipboard_ocr_handler import ClipboardOCRHandler
+from .clear_data_handler import ClearDataHandler
+from .insert_row_handler import InsertRowHandler
+from .insert_col_handler import InsertColHandler

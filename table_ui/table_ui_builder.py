@@ -13,7 +13,7 @@ class TableUIBuilder:
         logger.info("Building UI components...")
         self.controller.nav_bar.build(self.controller)
 
-        self.controller.resize_controls.build(self.controller.root, self.controller.apply_size_from_input)
+        self.controller.lower_controls.build(self.controller.root, self.controller.lower_commands)
 
         self.controller.canvas_table.build(self.controller)
         self.bind_shortcuts()

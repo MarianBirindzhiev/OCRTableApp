@@ -22,7 +22,7 @@ class ControllerManager:
             nav=self.components_manager.nav_controller,
             exporter=self.components_manager.exporter,
             nav_bar=self.components_manager.nav_bar,
-            resize_controls=self.components_manager.resize_controls,
+            lower_controls=self.components_manager.lower_controls,
             canvas_table=self.components_manager.canvas_table
         )
 
