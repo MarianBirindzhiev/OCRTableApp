@@ -138,14 +138,40 @@ jobs:
 
       - name: 🏗️ Build executable with PyInstaller (${{ matrix.arch }})
         run: |
-          pyinstaller \
-            --name SnapTable \
-            --windowed \
-            --icon=assets/logo.icns \
-            --add-data "models:models" \
-            --collect-all easyocr \
-            --collect-all numpy \
-            main.py
+          if [ "${{ matrix.arch }}" == "x64" ]; then
+            echo "Building Intel x64 with comprehensive numpy bundling..."
+            pyinstaller \
+              --name SnapTable \
+              --windowed \
+              --icon=assets/logo.icns \
+              --add-data "models:models" \
+              --collect-all easyocr \
+              --collect-all numpy \
+              --collect-all scipy \
+              --hidden-import=numpy \
+              --hidden-import=numpy.core \
+              --hidden-import=numpy.core._multiarray_umath \
+              --hidden-import=numpy.core._umath_tests \
+              --hidden-import=numpy.linalg \
+              --hidden-import=numpy.linalg._umath_linalg \
+              --hidden-import=numpy.random \
+              --hidden-import=numpy.random._common \
+              --hidden-import=numpy.random.bit_generator \
+              --hidden-import=numpy.random._generator \
+              --hidden-import=numpy.random._mt19937 \
+              --hidden-import=scipy.sparse.csgraph._validation \
+              main.py
+          else
+            echo "Building ARM64 with standard bundling..."
+            pyinstaller \
+              --name SnapTable \
+              --windowed \
+              --icon=assets/logo.icns \
+              --add-data "models:models" \
+              --collect-all easyocr \
+              --collect-all numpy \
+              main.py
+          fi
           ls dist
 
       - name: ✍️ Modify Info.plist for needed permissions

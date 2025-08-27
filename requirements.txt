@@ -4,4 +4,3 @@ matplotlib
 numpy
 Pillow
 mss
-certifi
