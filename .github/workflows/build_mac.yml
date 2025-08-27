@@ -145,7 +145,6 @@ jobs:
             --add-data "models:models" \
             --collect-all easyocr \
             --collect-all numpy \
-            --hidden-import=numpy \
             main.py
           ls dist
 
@@ -160,19 +159,7 @@ jobs:
       - name: 📦 Create architecture-specific release package
         run: |
           cd dist
-          # Use ditto instead of zip for proper macOS app bundle handling
-          ditto -c -k --sequesterRsrc --keepParent SnapTable.app ${{ matrix.artifact-name }}.zip
-          
-          # Verify the zip was created
-          ls -la ${{ matrix.artifact-name }}.zip
-          
-          # Test that the zip can be extracted
-          mkdir test_extract
-          cd test_extract
-          unzip ../${{ matrix.artifact-name }}.zip
-          ls -la
-          cd ..
-          rm -rf test_extract
+          zip -r ${{ matrix.artifact-name }}.zip SnapTable.app
 
       - name: 🔍 Verify final app bundle structure (${{ matrix.arch }})
         run: |
