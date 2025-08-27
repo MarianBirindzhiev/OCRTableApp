@@ -32,30 +32,8 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
-
-          # Force Intel-specific numpy/scipy installation for Intel builds
-          if [ "${{ matrix.arch }}" == "x64" ]; then
-            echo "Installing Intel-specific dependencies..."
-            pip install --no-cache-dir --force-reinstall numpy scipy
-            pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          fi
-
           pip install -r requirements.txt
           pip install pyinstaller
-
-      - name: 🔍 Verify Python and numpy installation (${{ matrix.arch }})
-        run: |
-          echo "=== Python and Architecture Info ==="
-          python -c "import sys; print(f'Python version: {sys.version}')"
-          python -c "import platform; print(f'Architecture: {platform.machine()}')"
-          
-          echo "=== NumPy verification ==="
-          python -c "import numpy; print(f'NumPy version: {numpy.__version__}')"
-          python -c "import numpy; print(f'NumPy file location: {numpy.__file__}')"
-          
-          echo "=== EasyOCR dependencies check ==="
-          python -c "import torch; print(f'PyTorch version: {torch.__version__}')" || echo "PyTorch not available"
-          python -c "import cv2; print(f'OpenCV version: {cv2.__version__}')" || echo "OpenCV not available"
 
       - name: 📥 Pre-download and prepare EasyOCR models properly
         run: |
@@ -138,40 +116,14 @@ jobs:
 
       - name: 🏗️ Build executable with PyInstaller (${{ matrix.arch }})
         run: |
-          if [ "${{ matrix.arch }}" == "x64" ]; then
-            echo "Building Intel x64 with comprehensive numpy bundling..."
-            pyinstaller \
-              --name SnapTable \
-              --windowed \
-              --icon=assets/logo.icns \
-              --add-data "models:models" \
-              --collect-all easyocr \
-              --collect-all numpy \
-              --collect-all scipy \
-              --hidden-import=numpy \
-              --hidden-import=numpy.core \
-              --hidden-import=numpy.core._multiarray_umath \
-              --hidden-import=numpy.core._umath_tests \
-              --hidden-import=numpy.linalg \
-              --hidden-import=numpy.linalg._umath_linalg \
-              --hidden-import=numpy.random \
-              --hidden-import=numpy.random._common \
-              --hidden-import=numpy.random.bit_generator \
-              --hidden-import=numpy.random._generator \
-              --hidden-import=numpy.random._mt19937 \
-              --hidden-import=scipy.sparse.csgraph._validation \
-              main.py
-          else
-            echo "Building ARM64 with standard bundling..."
-            pyinstaller \
-              --name SnapTable \
-              --windowed \
-              --icon=assets/logo.icns \
-              --add-data "models:models" \
-              --collect-all easyocr \
-              --collect-all numpy \
-              main.py
-          fi
+          pyinstaller \
+            --name SnapTable \
+            --windowed \
+            --icon=assets/logo.icns \
+            --add-data "models:models" \
+            --collect-all easyocr \
+            --collect-all numpy \
+            main.py
           ls dist
 
       - name: ✍️ Modify Info.plist for needed permissions

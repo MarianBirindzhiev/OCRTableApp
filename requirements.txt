@@ -1,6 +1,6 @@
 opencv-python
 easyocr
 matplotlib
-numpy
+numpy>=1.21.0,<2.0
 Pillow
 mss
