@@ -141,6 +141,8 @@ jobs:
           pyinstaller --name SnapTable --windowed --icon=assets/logo.icns \
             --add-data "models:models" \
             --collect-all easyocr \
+            --collect-all numpy \ 
+            --hidden-import numpy \ 
             main.py
           ls dist
 
