@@ -138,19 +138,14 @@ jobs:
 
       - name: 🏗️ Build executable with PyInstaller (${{ matrix.arch }})
         run: |
-          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns \
-            --add-data "models:models" \
-            --collect-all easyocr \
-            --collect-all numpy \ 
-            --hidden-import=numpy \ 
-            main.py
+          pyinstaller --name SnapTable --windowed --icon=assets/logo.icns --add-data "models:models" --collect-all easyocr --collect-all numpy --hidden-import=numpy main.py
           ls dist
 
       - name: ✍️ Modify Info.plist for needed permissions
         run: |
           /usr/libexec/PlistBuddy -c "Add :NSScreenCaptureUsageDescription string 'SnapTable needs screen capture access for OCR features.'" dist/SnapTable.app/Contents/Info.plist
 
-      - name: ✍️ Force Light Theme in Info.plist
+      - name: ✍️ Force Light Theme in Info.plist 
         run: |
           /usr/libexec/PlistBuddy -c "Add :NSRequiresAquaSystemAppearance bool true" dist/SnapTable.app/Contents/Info.plist
 
