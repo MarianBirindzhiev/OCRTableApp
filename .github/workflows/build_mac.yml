@@ -142,7 +142,7 @@ jobs:
             --add-data "models:models" \
             --collect-all easyocr \
             --collect-all numpy \ 
-            --hidden-import numpy \ 
+            --hidden-import=numpy \ 
             main.py
           ls dist
 
