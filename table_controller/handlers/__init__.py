@@ -8,3 +8,5 @@ from .clipboard_ocr_handler import ClipboardOCRHandler
 from .clear_data_handler import ClearDataHandler
 from .insert_row_handler import InsertRowHandler
 from .insert_col_handler import InsertColHandler
+from .mode_manager_handler import ModeManagerHandler
+from .delete_cell_handler import DeleteCellHandler

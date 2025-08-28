@@ -32,6 +32,9 @@ class TableGridController:
 
         self.callbacks = {
             "select_cell": self.select_cell,
+            "enter_edit_mode": self.enter_edit_mode,
+            "exit_edit_mode": self.exit_edit_mode,
+            "delete_cell_content": self.delete_cell_content,
             "start_edit": self.start_edit,
             "finish_edit": self.finish_edit,
         }
@@ -58,9 +61,15 @@ class TableGridController:
         self.ui_builder = TableUIBuilder(self)
 
         logger.info("Initializing TableGridController UI components.")        
-
-    def select_cell(self, row, col): 
-        self.handler.nav_handler.select_cell(row, col)
+       
+    def enter_edit_mode(self, row, col):
+        self.handler.mode_manager_handler.enter_edit_mode(row, col)
+        
+    def exit_edit_mode(self):
+        self.handler.mode_manager_handler.exit_edit_mode()
+        
+    def delete_cell_content(self, row, col):
+        self.handler.delete_cell_handler.delete_cell_content(row, col)
 
     def apply_size_from_input(self):
         self.handler.resize_handler.apply_size_from_input()

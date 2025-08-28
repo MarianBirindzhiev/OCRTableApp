@@ -9,7 +9,9 @@ from .handlers import (
         ClipboardOCRHandler,
         ClearDataHandler,
         InsertRowHandler,
-        InsertColHandler
+        InsertColHandler,
+        ModeManagerHandler,
+        DeleteCellHandler
 )
 
 import logging
@@ -30,6 +32,8 @@ class TableInteractionCoordinator:
         self.clear_handler = ClearDataHandler(controller)
         self.insert_row_handler = InsertRowHandler(controller) 
         self.insert_col_handler = InsertColHandler(controller)
+        self.mode_manager_handler = ModeManagerHandler(controller)
+        self.delete_cell_handler = DeleteCellHandler(controller)
 
 
  

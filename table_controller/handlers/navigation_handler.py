@@ -32,12 +32,22 @@ class NavigationHandler:
     
 
     def select_cell(self, row, col):
-        """
-        Update the currently selected cell.
-        """
-        logger.debug(f"Cell selected: ({row}, {col})")        
+        """Select a cell (SELECT mode)"""
+        logger.debug(f"Selecting cell ({row}, {col})")
+        
+        # If currently in edit mode, exit it first
+        if self.controller.state.interaction_mode == "EDIT":
+            self.exit_edit_mode()
+        
+        # Update state
+        self.controller.state.interaction_mode = "SELECT"
         self.controller.state.current_pos = (row, col)
+        self.controller.state.editing_cell = None
+        
+        # Update highlighting
         self.controller.canvas_table.highlight_active_cell()
+        
+        logger.info(f"Selected cell ({row}, {col})")
 
     def set_nav_mode(self, mode):
         """

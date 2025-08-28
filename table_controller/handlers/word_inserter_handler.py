@@ -34,11 +34,25 @@ class WordInserterHandler:
             logger.info(f"Grid expanded due to Tab key at position ({r}, {c})")
             CanvasLogicHelper.rebuild_table(self.controller)
 
-        # Update the UI for the edited cell
-
-        self.controller.canvas_table.entries[r][c].delete(0, tk.END)
-        self.controller.canvas_table.entries[r][c].insert(0, new_text)
-        logger.debug(f"UI cell ({r}, {c}) updated with text '{new_text}'")
+        # Update the UI for the edited cell - FIXED: Handle readonly state
+        if (r < len(self.controller.canvas_table.entries) and 
+            c < len(self.controller.canvas_table.entries[r])):
+            entry = self.controller.canvas_table.entries[r][c]
+            
+            # Get current state and temporarily enable for editing
+            current_state = entry['state']
+            entry.config(state='normal')
+            
+            # Update the content
+            entry.delete(0, tk.END)
+            entry.insert(0, new_text)
+            
+            # Restore the original state
+            entry.config(state=current_state)
+            
+            logger.debug(f"UI cell ({r}, {c}) updated with text '{new_text}'")
+        else:
+            logger.warning(f"Cannot update UI cell ({r}, {c}) - out of bounds")
 
         CanvasLogicHelper.move_cursor_and_focus(self.controller.state, self.controller.nav, self.controller)
         logger.debug(f"Cursor moved to new cell: {self.controller.state.current_pos}")
