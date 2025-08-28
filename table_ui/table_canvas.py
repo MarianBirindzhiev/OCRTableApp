@@ -55,23 +55,23 @@ class TableCanvas:
     def _rebuild(self, state, callbacks):
         """Rebuild table with enhanced mode-aware bindings"""
         # Clear existing widgets
-        for widget in self.table_frame.winfo_children():  # ✅ Fixed: use table_frame
+        for widget in self.table_frame.winfo_children():
             widget.destroy()
         
         self.entries = []
         
-        for r in range(state.rows):  # ✅ Fixed: use state parameter
+        for r in range(state.rows):  
             row_entries = []
-            for c in range(state.cols):  # ✅ Fixed: use state parameter
+            for c in range(state.cols): 
                 e = tk.Entry(
-                    self.table_frame, font=FONT, justify='center',  # ✅ Fixed: use table_frame
+                    self.table_frame, font=FONT, justify='center',  
                     relief='solid', bd=1, width=12,
                     state='readonly'  # ✅ Start in readonly mode for SELECT
                 )
                 e.grid(row=r, column=c, padx=1, pady=1)
                 
                 # Set initial content
-                if r < len(state.grid_data) and c < len(state.grid_data[r]):  # ✅ Fixed: use state parameter
+                if r < len(state.grid_data) and c < len(state.grid_data[r]):  
                     # Temporarily enable to insert content
                     e.config(state='normal')
                     e.insert(0, state.grid_data[r][c])
@@ -119,6 +119,21 @@ class TableCanvas:
                     else:
                         # White for normal cells
                         entry.config(bg='white', relief="solid", bd=1, state='readonly')
+
+    def get_entry_value(self, row, col):
+        """
+        Get the string value from the entry at (row, col).
+        """
+        value = self.entries[row][col].get()
+        logger.debug(f"Retrieved value from entry ({row}, {col}): {value}")
+        return value
+
+    def update_scroll_region(self, event=None):
+        """
+        Adjust the scroll region based on the content size.
+        """
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        logger.debug("Updated scroll region of the canvas.")
 
 
     def _handle_cell_click(self, event, row, col, callbacks):
@@ -261,18 +276,3 @@ class TableCanvas:
             callbacks["select_cell"](row, col + 1)
             self.entries[row][col + 1].focus_set()
             logger.debug(f"Navigated right from ({row}, {col}) to ({row}, {col + 1})")
-
-    def get_entry_value(self, row, col):
-        """
-        Get the string value from the entry at (row, col).
-        """
-        value = self.entries[row][col].get()
-        logger.debug(f"Retrieved value from entry ({row}, {col}): {value}")
-        return value
-
-    def update_scroll_region(self, event=None):
-        """
-        Adjust the scroll region based on the content size.
-        """
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-        logger.debug("Updated scroll region of the canvas.")
