@@ -22,7 +22,6 @@ class CanvasLogicHelper:
         """
         Rebuilds the visual grid and reconnects callbacks.
         """
-        controller.canvas_table._rebuild(
-            controller.state,
+        controller.canvas_table.rebuild_table(
             controller.callbacks
         )
