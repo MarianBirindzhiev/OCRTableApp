@@ -1,5 +1,5 @@
 from table_core import GridStateManager, NavigationController, GridCommandManager
-from table_ui import  NavigationBar, ResizeControls, TableCanvas
+from table_ui import  NavigationBar, LowerControls, TableCanvas
 from utilities import CSVExporter, LOGGER_NAME
 
 import logging
@@ -16,5 +16,5 @@ class ComponentsManager:
         self.nav_controller     = NavigationController()
         self.exporter           = CSVExporter()
         self.nav_bar            = NavigationBar()
-        self.resize_controls    = ResizeControls(self.state_manager)
+        self.lower_controls     = LowerControls(self.state_manager)
         self.canvas_table       = TableCanvas()

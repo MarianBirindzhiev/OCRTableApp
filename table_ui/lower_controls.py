@@ -5,23 +5,36 @@ import logging
 
 logger = logging.getLogger(LOGGER_NAME)
 
-class ResizeControls:
+class LowerControls:
     def __init__(self, state):
         # Store reference to application state (used to get initial rows/cols)
         self.state = state
-        logger.debug("ResizeControls initialized with state: %dx%d", state.rows, state.cols)
+        logger.debug("LowerControls initialized with state: %dx%d", state.rows, state.cols)
 
-    def build(self, root, on_apply):
+    def build(self, root, callbacks):
         """
         Build the resize controls UI and attach it to the root window.
 
         Parameters:
         - root: the parent tkinter widget
-        - on_apply: callback to invoke when the "Apply Size" button is clicked
+        - callbacks: a dictionary of callback functions for UI actions
         """
-        logger.info("Building resize controls UI.")
+        logger.info("Building lower controls UI.")
         frame = tk.Frame(root, bg=BG_COLOR)
         frame.pack(pady=4)
+
+        for text, command in [
+            ("Clear Data", callbacks["clear_all_data"]),
+            ("Insert Row", callbacks["insert_row"]),
+            ("Insert Column", callbacks["insert_col"]),
+        ]:
+            logger.debug(f"Creating action button: {text}")            
+            tk.Button(
+                frame, text=text, command=command,
+                font=FONT, bg=BUTTON_COLOR,
+                activebackground=BUTTON_HIGHLIGHT,
+                relief="groove", padx=12, pady=6
+            ).pack(side='left', padx=4)
 
         # Row input
         tk.Label(frame, text="Rows:", font=FONT, bg=BG_COLOR).pack(side='left', padx=4)
@@ -37,14 +50,14 @@ class ResizeControls:
         self.cols_entry.pack(side='left')
         logger.debug("Column entry initialized with value: %d", self.state.cols)        
 
-        # Apply button
+        # Apply size button
         tk.Button(
-            frame, text="Apply Size", command=on_apply,
+            frame, text="Apply Size", command=callbacks["apply_size"],
             font=FONT, bg=BUTTON_COLOR,
             activebackground=BUTTON_HIGHLIGHT,
             relief="groove", padx=12, pady=4
         ).pack(side='left', padx=10)
-        logger.info("Resize controls UI built.")        
+        logger.info("Resize controls UI built.")      
 
     def get_dimensions(self):
         """

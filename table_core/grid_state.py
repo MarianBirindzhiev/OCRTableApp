@@ -15,6 +15,9 @@ class GridStateManager:
         self.undo_stack = [] # Stack to store past grid states (for undo)
         self.redo_stack = [] # Stack to store undone states (for redo)
 
+        self.interaction_mode = 'SELECT'
+        self.editing_cell = None   # (row, col) of cell being edited in EDIT mode
+
         logger.info(f"Grid initialized with size {rows}x{cols}")
 
     def get_cell(self, row, col):

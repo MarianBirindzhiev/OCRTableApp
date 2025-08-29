@@ -8,7 +8,7 @@ logger = logging.getLogger(LOGGER_NAME)
 
 # === TableGridController: Wires together all table UI components and behaviors ===
 class TableGridController:
-    def __init__(self, window_manager, state, command_manager, nav, exporter, nav_bar, resize_controls, canvas_table):
+    def __init__(self, window_manager, state, command_manager, nav, exporter, nav_bar, lower_controls, canvas_table):
         """
         Initialize the table controller with all required components.
 
@@ -18,7 +18,7 @@ class TableGridController:
         - nav: NavigationController (handles direction logic)
         - exporter: IExporter (e.g. CSVExporter)
         - nav_bar: NavigationBar (direction buttons)
-        - resize_controls: ResizeControls (row/col adjustment)
+        - lower_controls: LowerControls (row/col adjustment)
         - canvas_table: TableCanvas (grid rendering)
         """
         self.window_manager = window_manager
@@ -28,12 +28,22 @@ class TableGridController:
         self.exporter = exporter
         self.canvas_table = canvas_table
         self.nav_bar = nav_bar
-        self.resize_controls = resize_controls
+        self.lower_controls = lower_controls
 
         self.callbacks = {
             "select_cell": self.select_cell,
+            "enter_edit_mode": self.enter_edit_mode,
+            "exit_edit_mode": self.exit_edit_mode,
+            "delete_cell_content": self.delete_cell_content,
             "start_edit": self.start_edit,
             "finish_edit": self.finish_edit,
+        }
+
+        self.lower_commands = {
+            "clear_all_data": self.clear_all_data,
+            "apply_size": self.apply_size_from_input,
+            "insert_row": self.insert_row,
+            "insert_col": self.insert_col
         }
 
         self.navigation_items = {
@@ -51,12 +61,21 @@ class TableGridController:
         self.ui_builder = TableUIBuilder(self)
 
         logger.info("Initializing TableGridController UI components.")        
-
-    def select_cell(self, row, col): 
-        self.handler.nav_handler.select_cell(row, col)
+       
+    def enter_edit_mode(self, row, col):
+        self.handler.mode_manager_handler.enter_edit_mode(row, col)
+        
+    def exit_edit_mode(self):
+        self.handler.mode_manager_handler.exit_edit_mode()
+        
+    def delete_cell_content(self, row, col):
+        self.handler.delete_cell_handler.delete_cell_content(row, col)
 
     def apply_size_from_input(self):
         self.handler.resize_handler.apply_size_from_input()
+
+    def clear_all_data(self):
+        self.handler.clear_handler.clear_with_confirmation()
 
     def undo(self):
         self.handler.history_handler.undo()
@@ -90,3 +109,9 @@ class TableGridController:
 
     def handle_clipboard_ocr(self):
         self.handler.clipboard_ocr_handler.run_ocr_from_clipboard()
+
+    def insert_row(self):
+        self.handler.insert_row_handler.insert_row_before_current()
+
+    def insert_col(self):
+        self.handler.insert_col_handler.insert_col_before_current()

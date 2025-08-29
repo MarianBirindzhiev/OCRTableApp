@@ -4,3 +4,6 @@ from .command import Command
 from .edit_cell_command import EditCellCommand
 from .resize_command import ResizeGridCommand
 from .word_insert_command import InsertWordCommand
+from .insert_row_command import InsertRowCommand
+from .insert_column_command import InsertColumnCommand
+from .clear_data_command import ClearDataCommand
